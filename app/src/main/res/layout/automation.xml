@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:id="@+id/automation_layout">
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#7e7d7d">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/setipbutton"
+            android:src="@drawable/setip"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="15dp"
+            android:clickable="true"/>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/newvar_button"
+            android:src="@drawable/add_button"
+            android:clickable="true"
+            android:onClick="showPopMenu"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

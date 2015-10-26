@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="vartype">
+        <item>DB</item>
+        <item>Q</item>
+        <item>I</item>
+        <item>M</item>
+    </string-array>
+    <string-array name="dbtype">
+        <item>DBX</item>
+        <item>DBB</item>
+        <item>DBW</item>
+        <item>DBD</item>
+    </string-array>
+</resources>

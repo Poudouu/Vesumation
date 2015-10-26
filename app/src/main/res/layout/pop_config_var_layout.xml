@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/new_var_layout"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:background="#858585">
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:id="@+id/spinner_var_type"
+        android:layout_gravity="center_horizontal" />
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_marginTop="30dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:text="Enter variable adress"
+            android:layout_marginRight="20dp" />
+
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/spinner_var_type"
+            android:id="@+id/entered_var_value"
+            android:layout_marginTop="50dp"
+            android:background="#c0c0c0"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal" />
+
+
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal">
+        <Button
+            android:id="@+id/back_var"
+            android:text="Back"
+            android:textColor="#F4FFDE"
+            android:textSize="20sp"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:onClick="CancelVarConfig"
+            android:layout_marginRight="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/button_shape2"
+            android:shadowColor="#5666A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5" />
+
+        <Button
+            android:id="@+id/done_var"
+            android:text="Done"
+            android:textColor="#F4FFDE"
+            android:onClick="ConfirmVarConfig"
+            android:textSize="20sp"
+            android:layout_width="100dp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="40dp"
+            android:background="@drawable/button_shape2"
+            android:shadowColor="#5666A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
