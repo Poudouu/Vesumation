@@ -1,94 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/new_var_layout"
-    android:background="@android:color/transparent">
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/setIp"
+    android:background="@drawable/layout_bg">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#cccccc"
         android:layout_height="wrap_content"
-        android:background="#858585">
-    <Spinner
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"
+        android:text="Ip: "
+        android:id="@+id/tvIp"/>
+    <EditText
+        android:layout_width="50dp"
+        android:maxLines="1"
+        android:maxLength="3"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_toRightOf="@id/tvIp"
+        android:id="@+id/editTxtIp1"
+        android:textColor="#cccccc"
+        android:gravity="center_horizontal" />
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editTxtIp1"
+        android:layout_alignBottom="@+id/editTxtIp1"
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:text=" . "
+        android:id="@+id/dotIp1"
+        android:textColor="#cccccc" />
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="3"
+
+        android:layout_toRightOf="@id/dotIp1"
+        android:id="@+id/editTxtIp2"
+        android:textColor="#cccccc"
+        android:autoText="true"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editTxtIp2"
+        android:layout_alignBottom="@+id/editTxtIp1"
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:text=" . "
+        android:id="@+id/dotIp2"
+        android:textColor="#cccccc" />
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="3"
+
+        android:layout_toRightOf="@id/dotIp2"
+        android:id="@+id/editTxtIp3"
+        android:textColor="#cccccc"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editTxtIp3"
+        android:layout_alignBottom="@+id/editTxtIp1"
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:text=" . "
+        android:id="@+id/dotIp3"
+        android:textColor="#cccccc" />
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="3"
+
+        android:layout_toRightOf="@id/dotIp3"
+        android:id="@+id/editTxtIp4"
+        android:layout_marginRight="5dp"
+        android:textColor="#cccccc"
+        android:gravity="center_horizontal" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#cccccc"
+        android:layout_height="30dp"
+        android:layout_below="@+id/tvIp"
         android:layout_marginTop="20dp"
-        android:id="@+id/spinner_var_type"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:text="Rack: "
+        android:id="@+id/tvRack"/>
+    <EditText
+        android:layout_width="50dp"
+        android:inputType="number"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tvRack"
+        android:id="@+id/ediTxtRack"
+        android:maxLines="1"
+        android:maxLength="3"
 
+        android:layout_marginRight="5dp"
+        android:layout_alignBottom="@id/tvRack"
+        android:textColor="#cccccc"
+        android:gravity="center_horizontal" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#cccccc"
+        android:layout_height="30dp"
+        android:layout_below="@+id/tvRack"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"
+        android:text="Slot: "
+        android:id="@+id/tvSlot"/>
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_toRightOf="@id/tvSlot"
+        android:id="@+id/ediTxtSlot"
+        android:maxLines="1"
+        android:maxLength="3"
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_marginTop="30dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:text="Enter variable adress"
-            android:layout_marginRight="20dp" />
-
-        <EditText
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_below="@id/spinner_var_type"
-            android:id="@+id/entered_var_value"
-            android:layout_marginTop="50dp"
-            android:background="#c0c0c0"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal" />
-
-
-
-    </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal">
-        <Button
-            android:id="@+id/back_var"
-            android:text="Back"
-            android:textColor="#F4FFDE"
-            android:textSize="20sp"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:onClick="CancelVarConfig"
-            android:layout_marginRight="40dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/button_shape2"
-            android:shadowColor="#5666A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5" />
-
-        <Button
-            android:id="@+id/done_var"
-            android:text="Done"
-            android:textColor="#F4FFDE"
-            android:onClick="ConfirmVarConfig"
-            android:textSize="20sp"
-            android:layout_width="100dp"
-            android:layout_gravity="center_vertical"
-            android:layout_height="40dp"
-            android:background="@drawable/button_shape2"
-            android:shadowColor="#5666A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+        android:layout_marginRight="5dp"
+        android:layout_alignBottom="@+id/tvSlot"
+        android:textColor="#cccccc"
+        android:gravity="center_horizontal" />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignBottom="@id/tvSlot"
+        android:layout_marginLeft="250dp"
+        android:clickable="true"
+        android:onClick="confirmIpSettings"
+        android:id="@+id/confirmip"
+        android:src="@drawable/confirm"/>
 
 </RelativeLayout>

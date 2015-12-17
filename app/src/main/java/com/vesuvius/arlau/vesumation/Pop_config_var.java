@@ -32,8 +32,8 @@ public class Pop_config_var extends Activity {
 
         setContentView(R.layout.pop_config_var_layout);
 
-        spinner = (Spinner) findViewById(R.id.spinner_var_type);
-        eText = (EditText) findViewById(R.id.entered_var_value);
+        //spinner = (Spinner) findViewById(R.id.spinner_var_type);
+        //eText = (EditText) findViewById(R.id.entered_var_value);
         ArrayAdapter adapter=ArrayAdapter.createFromResource(this, R.array.vartype, R.layout.spinner_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());

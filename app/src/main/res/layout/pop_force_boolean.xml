@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/forceval"
+    android:background="@drawable/layout_bg">
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#cccccc"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:textSize="20sp"
+        android:text="Force to: "
+        android:id="@+id/tvIp"/>
+
+<ImageView
+    android:layout_width="60dp"
+    android:layout_height="50dp"
+    android:src="@drawable/red_button"
+    android:layout_centerVertical="true"
+    android:layout_toRightOf="@id/tvIp"
+    android:paddingLeft="20dp"
+    android:id="@+id/forcefalse"/>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@id/forcefalse"
+        android:paddingLeft="20dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/green_button"
+        android:id="@+id/forcetrue"/>
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:clickable="true"
+        android:layout_marginLeft="20dp"
+        android:onClick="confirmIpSettings"
+        android:id="@+id/confirmforce"
+        android:layout_toRightOf="@id/forcetrue"
+        android:src="@drawable/confirm"
+        android:layout_marginRight="15dp"
+        android:layout_centerVertical="true" />
+
+</RelativeLayout>

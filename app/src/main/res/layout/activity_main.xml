@@ -16,7 +16,7 @@
         android:textColor="#CCCCCC"
         android:textSize="30sp"
         android:layout_gravity="center_horizontal"
-android:layout_marginTop="50dp"
+        android:layout_marginTop="50dp"
         android:layout_width="270dp"
         android:layout_height="60dp"
         android:background="@drawable/buttonshape1"
@@ -36,4 +36,23 @@ android:layout_marginTop="50dp"
         android:layout_marginBottom="50dp"
         />
 </LinearLayout>
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/vesuviuslogo"
+        android:layout_above="@+id/imageView3"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/imageView3"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/vesuviusline" />
 </RelativeLayout>

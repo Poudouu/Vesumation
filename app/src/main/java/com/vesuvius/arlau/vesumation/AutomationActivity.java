@@ -1,18 +1,23 @@
 package com.vesuvius.arlau.vesumation;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,33 +29,276 @@ public class AutomationActivity extends AppCompatActivity {
     EditText eText;
     String var_type, value;
     String str;
+    Point p;
+
     //DB XX DBB XX . XX
     //1  2  3   4  5 6
-    static int INDEX_VAR_TYPE=1;
-    static int INDEX_VAR_BYTE=2;
-    static int INDEX_SPINNERDB=3;
-    static int INDEX_DBX_BYTE_M_BIT=4;
-    static int INDEX_DOT=5;
-    static int INDEX_DBX_BIT=6;
+
     static int INDEX_DELETE_BUTTON=7;
-    static int INDEX_TV_VALUE=8;
     static int INDEX_READWRITE_VALUE=9;
-    static int INDEX_REFRESH_BUTTON=10;
-    static int INDEX_FORCE_BUTTON=11;
+    static int INDEX_START_DYN_LAYOUT=50;
 
     String PLCAddress="192.168.1.100";
     int PLCRack=0;
     int PLCSlot=3;
+    String Ip1="", Ip2="",Ip3="",Ip4="";
 
     int i = 0;
     boolean setup = false;
+    boolean layoutexisting;
+    String valueOutputReadWritePlc;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        i = 1;
+        i = INDEX_START_DYN_LAYOUT;
         setup = false;
-        setContentView(R.layout.automation);
+        if (layoutexisting) {
+
+        }else{
+            setContentView(R.layout.automation);
+
+        }
+        layoutexisting=true;
+    }
+
+    public void setIpAddress(View view){showPopup(AutomationActivity.this, p);
+    }
+
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        int[] location = new int[2];
+        ImageView button = (ImageView) findViewById(R.id.setipbutton);
+
+        // Get the x, y location and store it in the location[] array
+        // location[0] = x, location[1] = y.
+        button.getLocationOnScreen(location);
+
+        //Initialize the Point with x, and y positions
+        p = new Point();
+        p.x = location[0];
+        p.y = location[1];
+    }
+
+
+    private void showPopupforce(final View view,final Activity context, Point p){
+        RelativeLayout viewGroup = (RelativeLayout) context.findViewById(R.id.forceval);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        boolean booleanLayout=false,valueLayout=false;
+
+        //Get variable type and address
+        final RelativeLayout rl = (RelativeLayout) view.getParent();
+        TextView variable_type_tv = (TextView) rl.findViewById(R.id.var_type_confirmed_layout);
+        final TextView db_number = (TextView) rl.findViewById(R.id.db_number_confirmed_layout);
+        final TextView db_type = (TextView) rl.findViewById(R.id.db_type_confirmed_layout);
+        TextView variable_number_tv = (TextView) rl.findViewById(R.id.var_number_confirmed_layout);
+        //TextView variable_readwrite = (TextView) rl.findViewById(R.id.value_readwrite);
+        String variable_type_string = variable_type_tv.getText().toString();
+        String variable_number_String = variable_number_tv.getText().toString();
+        //String data_address_to_read=variable_type_string+variable_number_String;
+        View layout = null;
+        final PopupWindow popup = new PopupWindow(context);
+        // Check which value we need to force
+        boolean isMerker=false,isInput=false,isDB=false,isOutput=false;
+        if(variable_type_string.equals("M")) {
+            isMerker = true;
+            layout = inflater.inflate(R.layout.pop_force_boolean, viewGroup);
+            //ImageView forcetrue = (ImageView) layout.findViewById();
+            booleanLayout=true;
+
+        }
+        if(variable_type_string.equals("I")) {
+            isInput = true;
+            layout = inflater.inflate(R.layout.pop_force_boolean, viewGroup);
+            booleanLayout=true;
+
+        }
+        if(variable_type_string.equals("Q")){
+            isOutput=true;
+            layout = inflater.inflate(R.layout.pop_force_boolean, viewGroup);
+            booleanLayout=true;
+
+        }
+        if(variable_type_string.equals("DB")){
+            isDB = true;
+            if(db_type.getText().toString().equals("DBX.")){
+                layout = inflater.inflate(R.layout.pop_force_boolean, viewGroup);
+                booleanLayout=true;
+
+            }else
+            {
+                layout = inflater.inflate(R.layout.pop_force, viewGroup);
+                valueLayout=true;
+            }
+        }
+
+        if(booleanLayout){
+            final ImageView forceTrue = (ImageView) layout.findViewById(R.id.forcetrue);
+            final ImageView forceFalse = (ImageView) layout.findViewById(R.id.forcefalse);
+            forceTrue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    forceFalse.setImageDrawable(getDrawable(R.drawable.red_button));
+                    forceTrue.setImageDrawable(getDrawable(R.drawable.gree_button_pressed));
+                }
+            });
+            forceFalse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    forceTrue.setImageDrawable(getDrawable(R.drawable.green_button));
+                    forceFalse.setImageDrawable(getDrawable(R.drawable.red_button_pressed));
+                }
+            });
+        }else{
+
+        }
+
+        ImageView image = (ImageView) layout.findViewById(R.id.confirmforce);
+        final boolean finalBooleanLayout = booleanLayout;
+        final boolean finalValueLayout = valueLayout;
+        final boolean finalIsDB = isDB;
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Get Layouts and variables
+                int idParent = rl.getId();
+                String data_address_to_read=null;
+                LinearLayout lt = (LinearLayout) rl.getParent();
+                //Get variable type and address
+                if(finalBooleanLayout) {
+                    TextView variable_type_tv = (TextView) rl.findViewById(R.id.var_type_confirmed_layout);
+                    TextView variable_number_tv = (TextView) rl.findViewById(R.id.var_number_confirmed_layout);
+                    String variable_type_string = variable_type_tv.getText().toString();
+                    String variable_number_String = variable_number_tv.getText().toString();
+                    if(db_type.equals("DBX.")){
+                        data_address_to_read = variable_type_string+ db_type + db_number + variable_number_String;
+                    }else{
+                        data_address_to_read = variable_type_string + variable_number_String;
+                    }
+
+                }
+                if(finalValueLayout){
+
+                }
+                //Output for the read value and ID of the textView to display it.
+                String outString="";
+                //ID where the outString should be written (Value : )
+                int outStringId=idParent+INDEX_READWRITE_VALUE;
+                //ID of the textView to display it the error message
+                int errorStringId=outStringId;
+                //True, the data data_address_to_read will be forced
+                boolean DataAsToBeForced=true;
+                //Value forced in cas of DataAsToBeForced
+                int intValueToForce=0;
+                float floatValueToForce=0;
+                boolean bitValueToForce=false;
+                String outStr = "";
+
+                //Data type for merker(M), input and output. As to be defined before call parse_data_merker_IO
+
+
+                //Define container to stock the parsed datas.
+                ParseDataResult Result;
+                //Call of one of the two functions depending of the data type
+                if(finalIsDB ==true){
+                    Result=parse_data_db(data_address_to_read);
+                }else {
+                    Result = parse_data_merker_IO(data_address_to_read, isMerker, isInput, isOutput);
+                }
+                //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
+                // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
+                if(!(Result.errorMessage.equals(""))){
+                    valueOutputReadWritePlc=Result.errorMessage;
+                }else {
+                    readWriteData(Result, outString,outStringId,errorStringId, DataAsToBeForced,bitValueToForce,intValueToForce,floatValueToForce);
+                }
+
+                variable_readwrite.setText(valueOutputReadWritePlc);
+
+
+                popup.dismiss();
+                View vew = AutomationActivity.this.getCurrentFocus();
+                if (vew != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
+                }
+
+            }
+        });
+        popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
+    }
+
+    private void showPopup(final Activity context, Point p) {
+
+        // Inflate the popup_layout.xml
+        RelativeLayout viewGroup = (RelativeLayout) context.findViewById(R.id.setIp);
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View layout = inflater.inflate(R.layout.pop_config_var_layout, viewGroup);
+        String[] Ip = PLCAddress.split("\\.");
+        EditText edt1;
+        edt1 = (EditText) layout.findViewById(R.id.editTxtIp1);
+        edt1.setHint(Ip[0]);
+        edt1 = (EditText) layout.findViewById(R.id.editTxtIp2);
+        edt1.setHint(Ip[1]);
+        edt1 = (EditText) layout.findViewById(R.id.editTxtIp3);
+        edt1.setHint(Ip[2]);
+        edt1 = (EditText) layout.findViewById(R.id.editTxtIp4);
+        edt1.setHint(Ip[3]);
+        edt1 = (EditText) layout.findViewById(R.id.ediTxtRack);
+        edt1.setHint(String.valueOf(PLCRack));
+        edt1 = (EditText) layout.findViewById(R.id.ediTxtSlot);
+        edt1.setHint(String.valueOf(PLCSlot));
+        // Creating the PopupWindow
+
+        final PopupWindow popup = new PopupWindow(context);
+        popup.setContentView(layout);
+        popup.setFocusable(true);
+        popup.setOutsideTouchable(isRestricted());
+        ImageView image = (ImageView) layout.findViewById(R.id.confirmip);
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String temp="";
+                EditText edt;
+                edt = (EditText) layout.findViewById(R.id.editTxtIp1);
+                Ip1=edt.getText().toString();
+                edt = (EditText) layout.findViewById(R.id.editTxtIp2);
+                Ip2=edt.getText().toString();
+                edt = (EditText) layout.findViewById(R.id.editTxtIp3);
+                Ip3=edt.getText().toString();
+                edt = (EditText) layout.findViewById(R.id.editTxtIp4);
+                Ip4=edt.getText().toString();
+                if(Ip1.equals("")||Ip2.equals("")||Ip3.equals("")||Ip4.equals("")){}
+                else {
+                    PLCAddress = Ip1 + "." + Ip2 + "." + Ip3 + "." + Ip4;
+                }
+                edt = (EditText) layout.findViewById(R.id.ediTxtRack);
+                temp = edt.getText().toString();
+                if(temp.equals("")){}
+                else{
+                    PLCRack = Integer.parseInt(temp);
+                }
+
+                edt = (EditText) layout.findViewById(R.id.ediTxtSlot);
+                temp = edt.getText().toString();
+                if(temp.equals("")){}
+                else{
+                    PLCSlot = Integer.parseInt(temp);
+                }
+                popup.dismiss();
+                View vew = AutomationActivity.this.getCurrentFocus();
+                if (vew != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
+                }
+
+            }
+        });
+        popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
+
     }
 
     public void showPopMenu(View view){
@@ -83,82 +331,54 @@ public class AutomationActivity extends AppCompatActivity {
             menu.show();
         }
 
-    private int convertDpToPx(int dp){
-        return Math.round(dp*(getResources().getDisplayMetrics().xdpi/ DisplayMetrics.DENSITY_DEFAULT));
-
-    }
-
-
-
-
     public void createLayout2(int param){
         LinearLayout lt = (LinearLayout) findViewById(R.id.automation_layout);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view;
         switch (param) {
             case 1:
-                view = inflater.inflate(R.layout.layout_new_boolean, null);
+                view = inflater.inflate(R.layout.layout_new_db, null);
                 lt.addView(view);
-                assignDynamicId(i, view, param);
+                assignDynamicId(i, view, param,0);
                 break;
             case 2:
                 view = inflater.inflate(R.layout.layout_new_m, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param);
+                assignDynamicId(i,view,param,0);
                 break;
             case 3:
                 view = inflater.inflate(R.layout.layout_new_q, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param);
+                assignDynamicId(i,view,param,0);
                 break;
             case 4:
                 view = inflater.inflate(R.layout.layout_new_i, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param);
+                assignDynamicId(i,view,param,0);
                 break;
         }
     }
 
-    private void assignDynamicId(int i, View view, int param) {
+    private void assignDynamicId(int i, View view, int param,int index) {
 
-
-        TextView tv,tv2,tv3;
-        EditText editText1,editText2,editText3,editText4;
+        // VIEW = DYNAMICL AYOUT
         Spinner spinner;
-        RelativeLayout.LayoutParams params;
         view.setId(i);
-        ImageView deletebutton=null,refreshbutton=null,forcebutton=null;
-
+        ImageView deletebutton=null,confirmbutton=null;
 
         switch(param) {
             case 1:
-                //DB=VARTYPE
-                //XX = VAR_BYTE
-                //DBB = SPINNERDB
-                //DB XX DBB XX . XX
-                //1  2  3   4  5 6
-                //DB
-                tv = (TextView) view.findViewById(R.id.var_type);
-                tv.setId(i + INDEX_VAR_TYPE);
-                //XX
-                editText1 = (EditText) view.findViewById(R.id.dbnumber);
-                params = (RelativeLayout.LayoutParams)editText1.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv.getId());
-                editText1.setId(i + INDEX_VAR_BYTE);
-                //DBX DBB DBW DBD
                 spinner = (Spinner) view.findViewById(R.id.spinnerdb);
-                params = (RelativeLayout.LayoutParams)spinner.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText1.getId());
-                spinner.setId(i + INDEX_SPINNERDB);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        int viewid = parent.getId();
-                        viewid = viewid - INDEX_SPINNERDB;
+                        Spinner temp = (Spinner) view.getParent();
+                        RelativeLayout parentview = (RelativeLayout) temp.getParent();
                         TextView text = (TextView) view;
 
-                        EditText txt = (EditText) findViewById(viewid + INDEX_DBX_BIT);
-                        TextView dot = (TextView) findViewById(viewid + INDEX_DOT);
+                        EditText txt = (EditText) parentview.findViewById(R.id.bitdbx);
+                        TextView dot = (TextView) findViewById(R.id.dot);
                         if (text.getText().equals("DBX")) {
                             txt.setVisibility(View.VISIBLE);
                             dot.setVisibility(View.VISIBLE);
@@ -177,192 +397,267 @@ public class AutomationActivity extends AppCompatActivity {
                             dot.setVisibility(View.INVISIBLE);
                         }
                     }
-
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
-
                     }
                 });
-                //XX
-                editText2 = (EditText) view.findViewById(R.id.bytedbx);
-                params = (RelativeLayout.LayoutParams)editText2.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, spinner.getId());
-                editText2.setId(i + INDEX_DBX_BYTE_M_BIT);
-                //dot
-                tv2 = (TextView) view.findViewById(R.id.dot);
-                params = (RelativeLayout.LayoutParams)tv2.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText2.getId());
-                tv2.setId(i + INDEX_DOT);
-                //XX
-                editText3 = (EditText) view.findViewById(R.id.bitdbx);
-                params = (RelativeLayout.LayoutParams)editText3.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv2.getId());
-                editText3.setId(i + INDEX_DBX_BIT);
-                //DELETE LINE
-                deletebutton = (ImageView) view.findViewById(R.id.deletebut);
-                deletebutton.setId(i+INDEX_DELETE_BUTTON);
-                deletebutton.setOnClickListener(ClickDelete(deletebutton));
-                //VALUE :
-                tv3 = (TextView) findViewById(R.id.tvvalue);
-                tv3.setId(i+INDEX_TV_VALUE);
-                //VALUE READ WRITE
-                editText4 = (EditText) findViewById(R.id.value_readwrite);
-                params = (RelativeLayout.LayoutParams)editText4.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv3.getId());
-                editText4.setId(i+INDEX_READWRITE_VALUE);
                 //FORCE BUTTON
-                forcebutton = (ImageView) findViewById(R.id.forcebut);
-                forcebutton.setId(i + INDEX_FORCE_BUTTON);
-                forcebutton.setOnClickListener(ClickForce(forcebutton));
-
-                //REFRESH BUTTON
-                refreshbutton = (ImageView)findViewById(R.id.refreshbut);
-                params = (RelativeLayout.LayoutParams)refreshbutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, forcebutton.getId());
-                refreshbutton.setId(i + INDEX_REFRESH_BUTTON);
-                refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+                //I XX . XX
+                deletebutton = (ImageView) view.findViewById(R.id.deletebut);
+                deletebutton.setOnClickListener(ClickDelete(deletebutton));
+                //CONFIRM LAYOUT
+                confirmbutton = (ImageView) view.findViewById(R.id.confirmlayout);
+                confirmbutton.setOnClickListener(confirmLayout(confirmbutton));
 
                 break;
 
             case 2:
-                //M XX . XX
-                tv = (TextView) view.findViewById(R.id.var_type);
-                tv.setId(i + INDEX_VAR_TYPE);
-                //XX
-                editText1 = (EditText) view.findViewById(R.id.mbyte);
-                params = (RelativeLayout.LayoutParams)editText1.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv.getId());
-                editText1.setId(i + INDEX_VAR_BYTE);
-                //XX
-                editText2 = (EditText) view.findViewById(R.id.mbit);
-                params = (RelativeLayout.LayoutParams)editText2.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText1.getId());
-                editText2.setId(i + INDEX_DBX_BYTE_M_BIT);
-                // Value :
-                tv3 = (TextView) findViewById(R.id.tvvalue);
-                params = (RelativeLayout.LayoutParams)tv3.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText2.getId());
-                tv3.setId(i+INDEX_TV_VALUE);
-                //VALUE READ WRITE
-                editText4 = (EditText) findViewById(R.id.value_readwrite);
-                params = (RelativeLayout.LayoutParams)editText4.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv3.getId());
-                editText4.setId(i+INDEX_READWRITE_VALUE);
-                //DELETE LINE
+                //I XX . XX
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
-                deletebutton.setId(i + INDEX_DELETE_BUTTON);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
-                //REFRESH BUTTON
-                refreshbutton = (ImageView)findViewById(R.id.refreshbut);
-                params = (RelativeLayout.LayoutParams)refreshbutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, deletebutton.getId());
-                refreshbutton.setId(i + INDEX_REFRESH_BUTTON);
-                refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
-                //FORCE BUTTON
-                forcebutton = (ImageView) findViewById(R.id.forcebut);
-                params = (RelativeLayout.LayoutParams)forcebutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, refreshbutton.getId());
-                forcebutton.setId(i + INDEX_FORCE_BUTTON);
-                forcebutton.setOnClickListener(ClickForce(forcebutton));
+                //CONFIRM LAYOUT
+                confirmbutton = (ImageView) view.findViewById(R.id.confirmlayout);
+                confirmbutton.setOnClickListener(confirmLayout(confirmbutton));
 
                 break;
             case 3:
-                //Q XX . XX
-                tv = (TextView) view.findViewById(R.id.var_type);
-                tv.setId(i+INDEX_VAR_TYPE);
-                //XX
-                editText1 = (EditText) view.findViewById(R.id.qbyte);
-                params = (RelativeLayout.LayoutParams)editText1.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF,tv.getId());
-                editText1.setId(i+INDEX_VAR_BYTE);
-                //XX
-                editText2 = (EditText) view.findViewById(R.id.qbit);
-                params = (RelativeLayout.LayoutParams)editText2.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText1.getId());
-                editText2.setId(i+INDEX_DBX_BYTE_M_BIT);
-                // Value :
-                tv3 = (TextView) findViewById(R.id.tvvalue);
-                params = (RelativeLayout.LayoutParams)tv3.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText2.getId());
-                tv3.setId(i+INDEX_TV_VALUE);
-                //VALUE READ WRITE
-                editText4 = (EditText) findViewById(R.id.value_readwrite);
-                params = (RelativeLayout.LayoutParams)editText4.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv3.getId());
-                editText4.setId(i+INDEX_READWRITE_VALUE);
-                //DELETE LINE
+                //I XX . XX
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
-                deletebutton.setId(i + INDEX_DELETE_BUTTON);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
-                //REFRESH BUTTON
-                refreshbutton = (ImageView)findViewById(R.id.refreshbut);
-                params = (RelativeLayout.LayoutParams)refreshbutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, deletebutton.getId());
-                refreshbutton.setId(i + INDEX_REFRESH_BUTTON);
-                refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
-
-                //FORCE BUTTON
-                forcebutton = (ImageView) findViewById(R.id.forcebut);
-                params = (RelativeLayout.LayoutParams)forcebutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, refreshbutton.getId());
-                forcebutton.setId(i + INDEX_FORCE_BUTTON);
-                forcebutton.setOnClickListener(ClickForce(forcebutton));
+                //CONFIRM LAYOUT
+                confirmbutton = (ImageView) view.findViewById(R.id.confirmlayout);
+                confirmbutton.setOnClickListener(confirmLayout(confirmbutton));
 
                 break;
             case 4:
                 //I XX . XX
-                tv = (TextView) view.findViewById(R.id.var_type);
-                tv.setId(i+INDEX_VAR_TYPE);
-                //XX
-                editText1 = (EditText) view.findViewById(R.id.ibyte);
-                params = (RelativeLayout.LayoutParams)editText1.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF,tv.getId());
-                editText1.setId(i+INDEX_VAR_BYTE);
-                //XX
-                editText2 = (EditText) view.findViewById(R.id.ibit);
-                params = (RelativeLayout.LayoutParams)editText2.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText1.getId());
-                editText2.setId(i+INDEX_DBX_BYTE_M_BIT);
-                // Value :
-                tv3 = (TextView) findViewById(R.id.tvvalue);
-                params = (RelativeLayout.LayoutParams)tv3.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, editText2.getId());
-                tv3.setId(i+INDEX_TV_VALUE);
-                //VALUE READ WRITE
-                editText4 = (EditText) findViewById(R.id.value_readwrite);
-                params = (RelativeLayout.LayoutParams)editText4.getLayoutParams();
-                params.addRule(RelativeLayout.RIGHT_OF, tv3.getId());
-                editText4.setId(i+INDEX_READWRITE_VALUE);
-                //DELETE LINE
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
-                deletebutton.setId(i + INDEX_DELETE_BUTTON);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
-                //REFRESH BUTTON
-                refreshbutton = (ImageView)findViewById(R.id.refreshbut);
-                params = (RelativeLayout.LayoutParams)refreshbutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, deletebutton.getId());
-                refreshbutton.setId(i + INDEX_REFRESH_BUTTON);
-                refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
-
-                //FORCE BUTTON
-                forcebutton = (ImageView) findViewById(R.id.forcebut);
-                params = (RelativeLayout.LayoutParams)forcebutton.getLayoutParams();
-                params.addRule(RelativeLayout.LEFT_OF, refreshbutton.getId());
-                forcebutton.setId(i + INDEX_FORCE_BUTTON);
-                forcebutton.setOnClickListener(ClickForce(forcebutton));
+                //CONFIRM LAYOUT
+                confirmbutton = (ImageView) view.findViewById(R.id.confirmlayout);
+                confirmbutton.setOnClickListener(confirmLayout(confirmbutton));
 
                 break;
         }
 
     }
 
+    View.OnClickListener confirmLayout(final ImageView imageView){
+        return new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                TextView var_type,var_number;
+                String param,byteM="",bitM="",DBnum="",DBbyte="",DBbit="";
+                EditText editText;
+                ImageView refreshbutton,forcebutton,editbutton;
+                View view = null;
+
+                RelativeLayout lt = (RelativeLayout) imageView.getParent();
+                ViewGroup parent = (ViewGroup) lt.getParent();
+                int idContainer = lt.getId();
+                int index = parent.indexOfChild(lt);
+                var_type = (TextView) lt.findViewById(R.id.var_type);
+                param=var_type.getText().toString();
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                if(param.equals("DB")){
+                    Spinner spinner = (Spinner) lt.findViewById(R.id.spinnerdb);
+                    String DB_type = spinner.getSelectedItem().toString();
+                    if(DB_type.equals("DBX")) {
+                        //Get View
+                        view = inflater.inflate(R.layout.layout_boolean, null);
+                        //Variable Type
+                        var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
+                        var_type.setText(param);
+                        //Get Byte and Bit to build TextView Variable Type
+                        editText = (EditText) lt.findViewById(R.id.dbnumber);
+                        DBnum = editText.getText().toString();
+                        editText = (EditText) lt.findViewById(R.id.bytedbx);
+                        DBbyte = editText.getText().toString();
+                        editText = (EditText) lt.findViewById(R.id.bitdbx);
+                        DBbit = editText.getText().toString();
+                        var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
+                        TextView db_number = (TextView) view.findViewById(R.id.db_number_confirmed_layout);
+                        TextView db_type = (TextView) view.findViewById(R.id.db_type_confirmed_layout);
+                        db_number.setVisibility(View.VISIBLE);
+                        db_type.setVisibility(View.VISIBLE);
+                        db_number.setText(DBnum+".");
+                        db_type.setText(DB_type.toString());
+                        var_number.setText(DBbyte +"."+DBbit);
+                        //Set position of Variable value Textview + ID
+                        //EditBUTTON
+                        editbutton = (ImageView) view.findViewById(R.id.editbutton);
+                        editbutton.setOnClickListener(ClickEdit(editbutton));
+                        //REFRESH BUTTON
+                        refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
+                        refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                        //FORCE BUTTON
+                        forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                        forcebutton.setOnClickListener(confirmLayout(forcebutton));
+                    }
+                    if(DB_type.equals("DBB")||DB_type.equals("DBD")||DB_type.equals("DBW")){
+                        //Get View
+                        view = inflater.inflate(R.layout.layout_byteword, null);
+                        //Variable Type
+                        var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
+                        var_type.setText(param);
+                        //Get Byte and Bit to build TextView Variable Type
+                        editText = (EditText) lt.findViewById(R.id.dbnumber);
+                        DBnum = editText.getText().toString();
+                        editText = (EditText) lt.findViewById(R.id.bytedbx);
+                        DBbyte = editText.getText().toString();
+                        editText = (EditText) lt.findViewById(R.id.bitdbx);
+                        DBbit = editText.getText().toString();
+                        var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
+                        var_number.setText(DBnum+"."+DB_type.toString() +DBbyte);
+                        //Set position of Variable value Textview + ID
+                        //EditBUTTON
+                        editbutton = (ImageView) view.findViewById(R.id.editbutton);
+                        editbutton.setOnClickListener(ClickEdit(editbutton));
+                        //REFRESH BUTTON
+                        refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
+                        refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                        //FORCE BUTTON
+                        forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                        forcebutton.setOnClickListener(confirmLayout(forcebutton));
+                    }
+                }
+                if(param.equals("Q")){
+                    //Get View
+                    view = inflater.inflate(R.layout.layout_boolean, null);
+                    //Variable Type
+                    var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
+                    var_type.setText(param);
+                    //Get Byte and Bit to build TextView Variable Type
+                    editText = (EditText) lt.findViewById(R.id.qbyte);
+                    byteM=editText.getText().toString();
+                    editText = (EditText) lt.findViewById(R.id.qbit);
+                    bitM=editText.getText().toString();
+                    var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
+                    var_number.setText("" + byteM + "." + bitM);
+                    //Set position of Variable value Textview + ID
+                    //EditBUTTON
+                    editbutton = (ImageView)view.findViewById(R.id.editbutton);
+                    editbutton.setOnClickListener(ClickEdit(editbutton));
+                    //REFRESH BUTTON
+                    refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
+                    refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                    //FORCE BUTTON
+                    forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                    forcebutton.setOnClickListener(confirmLayout(forcebutton));                }
+                if(param.equals("M")){
+                    //Get View
+                    view = inflater.inflate(R.layout.layout_boolean, null);
+                    //Variable Type
+                    var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
+                    var_type.setText(param);
+                    //Get Byte and Bit to build TextView Variable Type
+                    editText = (EditText) lt.findViewById(R.id.mbyte);
+                    byteM=editText.getText().toString();
+                    editText = (EditText) lt.findViewById(R.id.mbit);
+                    bitM=editText.getText().toString();
+                    var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
+                    var_number.setText("" + byteM + "." + bitM);
+                    //Set position of Variable value Textview + ID
+                    //EditBURRON
+                    editbutton = (ImageView)view.findViewById(R.id.editbutton);
+                    editbutton.setOnClickListener(ClickEdit(editbutton));
+                    //REFRESH BUTTON
+                    refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
+                    refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                    //FORCE BUTTON
+                    forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                    forcebutton.setOnClickListener(confirmLayout(forcebutton));
+
+                }
+                if(param.equals("I")){
+                    //Get View
+                    view = inflater.inflate(R.layout.layout_boolean, null);
+                    //Variable Type
+                    var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
+                    var_type.setText(param);
+                    //Get Byte and Bit to build TextView Variable Type
+                    editText = (EditText) lt.findViewById(R.id.ibyte);
+                    byteM=editText.getText().toString();
+                    editText = (EditText) lt.findViewById(R.id.ibit);
+                    bitM=editText.getText().toString();
+                    var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
+                    var_number.setText("" + byteM + "." + bitM);
+                    //Set position of Variable value Textview + ID
+                    //EditBURRON
+                    editbutton = (ImageView)view.findViewById(R.id.editbutton);
+                    editbutton.setOnClickListener(ClickEdit(editbutton));
+                    //REFRESH BUTTON
+                    refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
+                    refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                    //FORCE BUTTON
+                    forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                    forcebutton.setOnClickListener(confirmLayout(forcebutton));
+                }
+                view.setId(idContainer);
+                parent.removeView(lt);
+                parent.addView(view, index);
+                View vew = AutomationActivity.this.getCurrentFocus();
+                if (vew != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
+                }     }
+        };
+    }
+
+    private View.OnClickListener ClickEdit(final ImageView editbutton) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView var_type;
+                String param;
+                ImageView deletebutton,confirmbutton;
+                View view = null;
+
+                RelativeLayout lt = (RelativeLayout) editbutton.getParent();
+                ViewGroup parent = (ViewGroup) lt.getParent();
+                int idContainer = lt.getId();
+                int index = parent.indexOfChild(lt);
+                var_type = (TextView) lt.findViewById(R.id.var_type_confirmed_layout);
+                param=var_type.getText().toString();
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                if(param.equals("I")){
+                    view = inflater.inflate(R.layout.layout_new_i, null);
+                }
+                if(param.equals("Q")){
+                    view = inflater.inflate(R.layout.layout_new_q,null);
+                }
+                if(param.equals("DB")){
+                    view = inflater.inflate(R.layout.layout_new_db,null);
+                }
+                if(param.equals("M")){
+                    view = inflater.inflate(R.layout.layout_new_m,null);
+                }
+
+                deletebutton = (ImageView) view.findViewById(R.id.deletebut);
+                deletebutton.setOnClickListener(ClickDelete(deletebutton));
+                //CONFIRM LAYOUT
+                confirmbutton = (ImageView) view.findViewById(R.id.confirmlayout);
+                confirmbutton.setOnClickListener(confirmLayout(confirmbutton));
+                view.setId(idContainer);
+                parent.removeView(lt);
+                parent.addView(view, index);
+            }
+        };
+    }
+
+
     View.OnClickListener ClickDelete(final ImageView imageView){
         return new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                int idParent = imageView.getId()-INDEX_DELETE_BUTTON;
-                LinearLayout lt = (LinearLayout) findViewById(R.id.automation_layout);
-                RelativeLayout rl = (RelativeLayout) findViewById(idParent);
+                RelativeLayout rl = (RelativeLayout) imageView.getParent();
+                LinearLayout lt = (LinearLayout) rl.getParent();
                 lt.removeView(rl);
                 }
         };
@@ -373,11 +668,15 @@ public class AutomationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                int idParent = imageView.getId()-INDEX_DELETE_BUTTON;
-                LinearLayout lt = (LinearLayout) findViewById(R.id.automation_layout);
-                RelativeLayout rl = (RelativeLayout) findViewById(idParent);
-                //TODO Build string
-                String data_address_to_read="M4.4";
+                RelativeLayout rl = (RelativeLayout) imageView.getParent();
+                int idParent = rl.getId();
+                LinearLayout lt = (LinearLayout) rl.getParent();
+                TextView variable_type_tv = (TextView) rl.findViewById(R.id.var_type_confirmed_layout);
+                TextView variable_number_tv = (TextView) rl.findViewById(R.id.var_number_confirmed_layout);
+                TextView variable_readwrite = (TextView) rl.findViewById(R.id.value_readwrite);
+                String variable_type_string = variable_type_tv.getText().toString();
+                String variable_number_String = variable_number_tv.getText().toString();
+                String data_address_to_read=variable_type_string+variable_number_String;
                 //Output for the read value and ID of the textView to display it.
                 String outString="";
                 //ID where the outString should be written (Value : )
@@ -392,33 +691,45 @@ public class AutomationActivity extends AppCompatActivity {
                 boolean bitValueToForce=false;
                 int intValueToForce=0;
                 float floatValueToForce=0;
+                String outStr = "";
 
                 //Data type for merker(M), input and output. As to be defined before call parse_data_merker_IO
-                //TODO handle M, Q and I depending value of tv (1)
-                boolean isMerker=true;
-                boolean isInput=false;
-                boolean isOutput=false;
 
+                boolean isMerker=false,isInput=false,isDB=false,isOutput=false;
+                if(variable_type_string.equals("M")) {
+                    isMerker = true;
+                }
+                if(variable_type_string.equals("I")) {
+                    isInput = true;
+                }
+                if(variable_type_string.equals("Q")){
+                    isOutput=true;
+                }
+                if(variable_type_string.equals("DB")){
+                    isDB = true;
+                }
                 //Define container to stock the parsed datas.
                 ParseDataResult Result;
                 //Call of one of the two functions depending of the data type
-                //TODO Star parse DB or MERKER depending test above
-                //Result=parse_data_db(data_address_to_read);
-                Result = parse_data_merker_IO(data_address_to_read,isMerker,isInput,isOutput);
-
+                if(isDB==true){
+                    Result=parse_data_db(data_address_to_read);
+                }else {
+                    Result = parse_data_merker_IO(data_address_to_read, isMerker, isInput, isOutput);
+                }
                 //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
                 // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
                 if(!(Result.errorMessage.equals(""))){
-                    EditText txout1=(EditText)findViewById(errorStringId);
-                    txout1.setText(Result.errorMessage);
-
+                    valueOutputReadWritePlc=Result.errorMessage;
                 }else {
                     readWriteData(Result, outString,outStringId,errorStringId, DataAsToBeForced,bitValueToForce,intValueToForce,floatValueToForce);
-
                 }
+
+                variable_readwrite.setText(valueOutputReadWritePlc);
             }
 
+
         };
+
     }
 
     View.OnClickListener ClickForce(final ImageView imageView){
@@ -440,6 +751,8 @@ public class AutomationActivity extends AppCompatActivity {
         //Create a new instance of the PlcReadWrite class and execute it.
         new PlcReadWrite().execute(params);
     }
+
+
 
     //Container with for the PlcReadWrite task parameters.
     private static class ReadWritekParams {
@@ -472,7 +785,7 @@ public class AutomationActivity extends AppCompatActivity {
         }
     }
 
-    private  class PlcReadWrite extends AsyncTask<ReadWritekParams, Void, String> {
+    public  class PlcReadWrite extends AsyncTask<ReadWritekParams, Void, String> {
         String outString;
         String errorMessage;
         int outStringId;
@@ -516,7 +829,7 @@ public class AutomationActivity extends AppCompatActivity {
                             params[0]. errorMessage = "";
                         } else {
                             params[0].outString = "";
-                            params[0].errorMessage = "ERR: Wrong input data";
+                            params[0].errorMessage = "ERR: Wrong input.";
                         }
                     }
 
@@ -546,7 +859,7 @@ public class AutomationActivity extends AppCompatActivity {
                     }
 
                     if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("O")))){
-                        params[0].errorMessage="ERR: Wrong data input.";
+                        params[0].errorMessage="ERR: Wrong input.";
                         params[0].outString="";
                     }
 
@@ -557,12 +870,12 @@ public class AutomationActivity extends AppCompatActivity {
 
 
                 }else{
-                    params[0].errorMessage="ERR: No connection with the PLC";
+                    params[0].errorMessage="ERR: No connect.";
                     params[0].outString="";
                 }
 
             } catch (Exception e) {
-                params[0].errorMessage="ERR: No connection with the PLC";
+                params[0].errorMessage="ERR: No connect.";
                 params[0].outString="";
                 Thread.interrupted();
             }
@@ -578,12 +891,9 @@ public class AutomationActivity extends AppCompatActivity {
         protected void onPostExecute(String result){
 
             if(errorMessage.equals("")) {
-                EditText txout = (EditText) findViewById(outStringId);
-                txout.setText(outString);
+                valueOutputReadWritePlc=outString;
             }else {
-                EditText txout1 = (EditText) findViewById(errorStringId);
-                String cheval="";
-                txout1.setText(errorMessage);
+                valueOutputReadWritePlc=errorMessage;
             }
         }
 
