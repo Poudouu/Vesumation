@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -47,7 +48,7 @@ public class AutomationActivity extends AppCompatActivity {
     boolean setup = false;
     boolean layoutexisting;
     String valueOutputReadWritePlc;
-
+    S7Client client=new S7Client();
 
 
     @Override
@@ -64,7 +65,8 @@ public class AutomationActivity extends AppCompatActivity {
         layoutexisting=true;
     }
 
-    public void setIpAddress(View view){showPopup(AutomationActivity.this, p);
+    public void setIpAddress(View view){
+        showPopup(AutomationActivity.this, p,view);
     }
 
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -140,15 +142,15 @@ public class AutomationActivity extends AppCompatActivity {
             forceTrue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    forceFalse.setImageDrawable(getDrawable(R.drawable.red_button));
-                    forceTrue.setImageDrawable(getDrawable(R.drawable.gree_button_pressed));
+                    //forceFalse.setImageDrawable(getDrawable(R.drawable.red_button));
+                    //forceTrue.setImageDrawable(getDrawable(R.drawable.gree_button_pressed));
                 }
             });
             forceFalse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    forceTrue.setImageDrawable(getDrawable(R.drawable.green_button));
-                    forceFalse.setImageDrawable(getDrawable(R.drawable.red_button_pressed));
+                    //forceTrue.setImageDrawable(getDrawable(R.drawable.green_button));
+                    //forceFalse.setImageDrawable(getDrawable(R.drawable.red_button_pressed));
                 }
             });
         }else{
@@ -159,6 +161,10 @@ public class AutomationActivity extends AppCompatActivity {
         final boolean finalBooleanLayout = booleanLayout;
         final boolean finalValueLayout = valueLayout;
         final boolean finalIsDB = isDB;
+
+        final boolean finalIsMerker = isMerker;
+        final boolean finalIsInput = isInput;
+        final boolean finalIsOutput = isOutput;
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,7 +211,7 @@ public class AutomationActivity extends AppCompatActivity {
                 if(finalIsDB ==true){
                     Result=parse_data_db(data_address_to_read);
                 }else {
-                    Result = parse_data_merker_IO(data_address_to_read, isMerker, isInput, isOutput);
+                    Result = parse_data_merker_IO(data_address_to_read, finalIsMerker, finalIsInput, finalIsOutput);
                 }
                 //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
                 // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
@@ -214,7 +220,7 @@ public class AutomationActivity extends AppCompatActivity {
                 }else {
                     readWriteData(Result, outString,outStringId,errorStringId, DataAsToBeForced,bitValueToForce,intValueToForce,floatValueToForce);
                 }
-
+                TextView variable_readwrite = (TextView) rl.findViewById(R.id.value_readwrite);
                 variable_readwrite.setText(valueOutputReadWritePlc);
 
 
@@ -230,12 +236,12 @@ public class AutomationActivity extends AppCompatActivity {
         popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
     }
 
-    private void showPopup(final Activity context, Point p) {
+    private void showPopup(final Activity context, Point p, View view) {
 
         // Inflate the popup_layout.xml
-        RelativeLayout viewGroup = (RelativeLayout) context.findViewById(R.id.setIp);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate(R.layout.pop_config_var_layout, viewGroup);
+        //LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View layout = inflater.inflate(R.layout.pop_config_var_layout, null);
         String[] Ip = PLCAddress.split("\\.");
         EditText edt1;
         edt1 = (EditText) layout.findViewById(R.id.editTxtIp1);
@@ -252,7 +258,7 @@ public class AutomationActivity extends AppCompatActivity {
         edt1.setHint(String.valueOf(PLCSlot));
         // Creating the PopupWindow
 
-        final PopupWindow popup = new PopupWindow(context);
+        final PopupWindow popup = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popup.setContentView(layout);
         popup.setFocusable(true);
         popup.setOutsideTouchable(isRestricted());
@@ -260,45 +266,48 @@ public class AutomationActivity extends AppCompatActivity {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String temp="";
+                String temp = "";
                 EditText edt;
                 edt = (EditText) layout.findViewById(R.id.editTxtIp1);
-                Ip1=edt.getText().toString();
+                Ip1 = edt.getText().toString();
                 edt = (EditText) layout.findViewById(R.id.editTxtIp2);
-                Ip2=edt.getText().toString();
+                Ip2 = edt.getText().toString();
                 edt = (EditText) layout.findViewById(R.id.editTxtIp3);
-                Ip3=edt.getText().toString();
+                Ip3 = edt.getText().toString();
                 edt = (EditText) layout.findViewById(R.id.editTxtIp4);
-                Ip4=edt.getText().toString();
-                if(Ip1.equals("")||Ip2.equals("")||Ip3.equals("")||Ip4.equals("")){}
-                else {
+                Ip4 = edt.getText().toString();
+                if (Ip1.equals("") || Ip2.equals("") || Ip3.equals("") || Ip4.equals("")) {
+                } else {
                     PLCAddress = Ip1 + "." + Ip2 + "." + Ip3 + "." + Ip4;
                 }
                 edt = (EditText) layout.findViewById(R.id.ediTxtRack);
                 temp = edt.getText().toString();
-                if(temp.equals("")){}
-                else{
+                if (temp.equals("")) {
+                } else {
                     PLCRack = Integer.parseInt(temp);
                 }
 
                 edt = (EditText) layout.findViewById(R.id.ediTxtSlot);
                 temp = edt.getText().toString();
-                if(temp.equals("")){}
-                else{
+                if (temp.equals("")) {
+                } else {
                     PLCSlot = Integer.parseInt(temp);
                 }
                 popup.dismiss();
                 View vew = AutomationActivity.this.getCurrentFocus();
                 if (vew != null) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
                 }
 
             }
         });
-        popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
-
+        LinearLayout ln = (LinearLayout) view.getParent();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            popup.showAsDropDown(view);
+        }else{
+            popup.showAtLocation(layout, Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0, 0);
+        }
     }
 
     public void showPopMenu(View view){
@@ -321,7 +330,6 @@ public class AutomationActivity extends AppCompatActivity {
                         case R.id.i_id:
                             createLayout2(4);
                             break;
-
                     }
                     i=i+20;
                     return true;
@@ -785,6 +793,7 @@ public class AutomationActivity extends AppCompatActivity {
         }
     }
 
+
     public  class PlcReadWrite extends AsyncTask<ReadWritekParams, Void, String> {
         String outString;
         String errorMessage;
@@ -794,15 +803,14 @@ public class AutomationActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(ReadWritekParams... params) {
-            S7Client client=new S7Client();
+
             byte[] data_1=new byte[2];
             byte[] data_2=new byte[2];
             byte[] data_3=new byte[4];
             int AreaType=0;
-
             try {
                 client.SetConnectionType(S7.S7_BASIC);
-                res = client.ConnectTo(PLCAddress, PLCRack, PLCSlot);
+                res = client.ConnectTo("192.168.1.100",0,3);
 
                 if(res==0){
 
@@ -1026,7 +1034,7 @@ public class AutomationActivity extends AppCompatActivity {
             Result.data_type = "I";
         }
         if(isOutput) {
-            split1 = "[O]";
+            split1 = "[Q]";
             Result.data_type = "O";
         }
         token1 = token[0].split(split1);
