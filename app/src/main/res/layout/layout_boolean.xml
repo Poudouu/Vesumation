@@ -85,14 +85,14 @@
 
 
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:id="@+id/forcebut"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/refreshbut"
-        android:layout_marginRight="15dp"
-        android:clickable="true"
-        android:src="@drawable/force" />
+    android:layout_width="35dp"
+    android:layout_height="35dp"
+    android:id="@+id/forcebut"
+    android:layout_centerVertical="true"
+    android:layout_toLeftOf="@+id/refreshbut"
+    android:layout_marginRight="15dp"
+    android:clickable="true"
+    android:src="@drawable/force" />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="2dp"
