@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="50dp"
+    android:layout_width="fill_parent"
+    android:id="@+id/new_variable_entered"
+    android:background="#CCCCCC">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Q"
+        android:id="@+id/var_type" />
+    <EditText
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:inputType="number"
+        android:layout_toRightOf="@id/var_type"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/qbyte"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_toRightOf="@id/qbyte"
+        android:layout_marginBottom="5dp"
+        android:layout_alignBottom="@id/qbyte"
+        android:text="."/>
+
+    <EditText
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/qbyte"
+        android:inputType="number"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/qbit"/>
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/delete"
+        android:layout_marginTop="5dp"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:id="@+id/deletebut"/>
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:id="@+id/confirmlayout"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/deletebut"
+        android:layout_marginRight="15dp"
+        android:clickable="true"
+        android:src="@drawable/confirm" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="48dp"
+        android:background="#4b4b4d"></LinearLayout>
+
+
+</RelativeLayout>
