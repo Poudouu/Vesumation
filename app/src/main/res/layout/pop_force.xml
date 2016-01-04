@@ -20,7 +20,6 @@
         android:maxLines="1"
         android:maxLength="3"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:layout_toRightOf="@id/tvIp"
         android:id="@+id/editforce"
         android:textColor="#cccccc"

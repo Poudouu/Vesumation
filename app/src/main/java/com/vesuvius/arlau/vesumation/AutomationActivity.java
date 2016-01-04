@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,6 +28,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.vesuvius.arlau.vesumation.Moka7.*;
+
+import org.w3c.dom.Text;
 
 public class AutomationActivity extends AppCompatActivity {
 
@@ -83,7 +87,6 @@ public class AutomationActivity extends AppCompatActivity {
         p.y = location[1];
     }
 
-
     public void showPopupforce(View view){
 
         // Inflate the popup_layout.xml
@@ -94,8 +97,10 @@ public class AutomationActivity extends AppCompatActivity {
         TextView variable_number_tv = (TextView) rl.findViewById(R.id.var_number_confirmed_layout);
         String variable_number = variable_number_tv.getText().toString();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        TextView db_type_tv = (TextView) rl.findViewById(R.id.db_type_confirmed_layout);
+        String db_type = db_type_tv.getText().toString();
 
-        if (variable_type.equals("M")||variable_type.equals("Q")){
+        if (variable_type.equals("M")||variable_type.equals("Q") || db_type.equals("DBX")){
             dialog.setContentView(R.layout.pop_force_boolean);
             ImageView confirmForce = (ImageView) dialog.findViewById(R.id.confirmforce);
             confirmForce.setOnClickListener(ClickForceBoolean(rl, dialog, variable_type, variable_number));
@@ -116,6 +121,23 @@ public class AutomationActivity extends AppCompatActivity {
                 }
             });
         }
+        if(variable_type.equals("DB") && (db_type.equals("DBB")||db_type.equals("DBW")))
+        {
+            dialog.setContentView(R.layout.pop_force);
+            ImageView confirmForce = (ImageView) dialog.findViewById(R.id.confirmforce);
+            EditText edt = (EditText)dialog.findViewById(R.id.editforce);
+            edt.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+            confirmForce.setOnClickListener(ClickForce(rl, dialog));
+        }
+        if(variable_type.equals("DB") && (db_type.equals("DBD")))
+        {
+            dialog.setContentView(R.layout.pop_force);
+            EditText edt = (EditText)dialog.findViewById(R.id.editforce);
+            edt.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            ImageView confirmForce = (ImageView) dialog.findViewById(R.id.confirmforce);
+            confirmForce.setOnClickListener(ClickForce(rl, dialog));
+        }
+
         dialog.show();
     }
 
@@ -353,6 +375,7 @@ public class AutomationActivity extends AppCompatActivity {
                 if(param.equals("DB")){
                     Spinner spinner = (Spinner) lt.findViewById(R.id.spinnerdb);
                     String DB_type = spinner.getSelectedItem().toString();
+
                     if(DB_type.equals("DBX")) {
                         //Get View
                         view = inflater.inflate(R.layout.layout_boolean, null);
@@ -385,7 +408,7 @@ public class AutomationActivity extends AppCompatActivity {
                     }
                     if(DB_type.equals("DBB")||DB_type.equals("DBD")||DB_type.equals("DBW")){
                         //Get View
-                        view = inflater.inflate(R.layout.layout_byteword, null);
+                        view = inflater.inflate(R.layout.layout_boolean, null);
                         //Variable Type
                         var_type = (TextView) view.findViewById(R.id.var_type_confirmed_layout);
                         var_type.setText(param);
@@ -394,10 +417,15 @@ public class AutomationActivity extends AppCompatActivity {
                         DBnum = editText.getText().toString();
                         editText = (EditText) lt.findViewById(R.id.bytedbx);
                         DBbyte = editText.getText().toString();
-                        editText = (EditText) lt.findViewById(R.id.bitdbx);
-                        DBbit = editText.getText().toString();
+                        TextView db_number = (TextView) view.findViewById(R.id.db_number_confirmed_layout);
+                        TextView db_type = (TextView) view.findViewById(R.id.db_type_confirmed_layout);
                         var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
-                        var_number.setText(DBnum + "." + DB_type.toString() + DBbyte);
+
+                        db_number.setVisibility(View.VISIBLE);
+                        db_type.setVisibility(View.VISIBLE);
+                        db_number.setText(DBnum);
+                        db_type.setText(DB_type.toString());
+                        var_number.setText(DBbyte);
                         //Set position of Variable value Textview + ID
                         //EditBUTTON
                         editbutton = (ImageView) view.findViewById(R.id.editbutton);
@@ -420,7 +448,7 @@ public class AutomationActivity extends AppCompatActivity {
                     editText = (EditText) lt.findViewById(R.id.qbit);
                     bitM=editText.getText().toString();
                     var_number = (TextView) view.findViewById(R.id.var_number_confirmed_layout);
-                    var_number.setText("" + byteM + "." + bitM);
+                    var_number.setText(byteM + "." + bitM);
                     //Set position of Variable value Textview + ID
                     //EditBUTTON
                     editbutton = (ImageView)view.findViewById(R.id.editbutton);
@@ -472,6 +500,10 @@ public class AutomationActivity extends AppCompatActivity {
                     //REFRESH BUTTON
                     refreshbutton = (ImageView) view.findViewById(R.id.refreshbut);
                     refreshbutton.setOnClickListener(ClickRefresh(refreshbutton));
+
+                    forcebutton = (ImageView) view.findViewById(R.id.forcebut);
+                    forcebutton.setVisibility(View.INVISIBLE);
+                    forcebutton.setEnabled(false);
                 }
                 view.setId(idContainer);
                 parent.removeView(lt);
@@ -624,6 +656,10 @@ public class AutomationActivity extends AppCompatActivity {
                 //bitValuetoForce
                 ImageView greenbut = (ImageView) dialog.findViewById(R.id.forcetrue);
                 ImageView redbut = (ImageView) dialog.findViewById(R.id.forcefalse);
+                // Data type
+                TextView variable_type = (TextView) ll.findViewById(R.id.var_type_confirmed_layout);
+                if (variable_type.getText().equals("M")){isMerker=true;}
+                if (variable_type.getText().equals("Q")){isOutput=true;}
 
                 if(greenbut.getDrawable().getConstantState().equals(R.drawable.gree_button_pressed) && redbut.getDrawable().getConstantState().equals(R.drawable.red_button) ){
                     bitValueToForce=true;
@@ -650,14 +686,64 @@ public class AutomationActivity extends AppCompatActivity {
 
     }
 
+    View.OnClickListener ClickForce(final RelativeLayout ll, final Dialog dialog) {
+
+        return new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //Define container to stock the parsed datas.
+                boolean isMerker=false, isInput=false, isOutput=false,DataAsToBeForced=true;
+                int intValueToForce=0;
+                float floatValueToForce=0;
+                boolean bitValueToForce=false;
+                String outString="";
+                int outStringId=0;
+                int errorStringId=outStringId;
+                String variable_type, db_number, db_type, variable_number;
+                TextView variable_type_tv, db_number_tv, db_type_tv, variable_number_tv;
+                ParseDataResult Result;
+                //Construction of the datas required to force
+                //data address
+                variable_number_tv = (TextView) ll.findViewById(R.id.var_number_confirmed_layout);
+                db_number_tv = (TextView) ll.findViewById(R.id.db_number_confirmed_layout);
+                db_type_tv = (TextView) ll.findViewById(R.id.db_type_confirmed_layout);
+                variable_type_tv = (TextView) ll.findViewById(R.id.var_type_confirmed_layout);
+                variable_type=variable_type_tv.toString();
+                db_number=db_number_tv.toString();
+                db_type=db_type_tv.toString();
+                variable_number=variable_number_tv.toString();
+                String data_address_to_read=variable_type+db_number+"."+db_type+variable_number;
+                //bitValuetoForce
+                EditText value_to_force_edt = (EditText) dialog.findViewById(R.id.editforce);
+                if(db_type_tv.getText().equals("DBB")||db_type_tv.getText().equals("DBW")){intValueToForce=Integer.parseInt(value_to_force_edt.getText().toString());}
+                if(db_type_tv.getText().equals("DBD")){floatValueToForce=Float.parseFloat(value_to_force_edt.getText().toString());}
+                // Data type
+
+                Result = parse_data_db(data_address_to_read);
+
+                //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
+                // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
+                if(!(Result.errorMessage.equals(""))){
+                    valueOutputReadWritePlc=Result.errorMessage;
+                } else {
+                    readWriteData(Result, outString, outStringId, errorStringId, DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce);
+                }
+                TextView variable_readwrite = (TextView) ll.findViewById(R.id.value_readwrite);
+                variable_readwrite.setText(valueOutputReadWritePlc);
+                dialog.dismiss();
+            }
+        };
+
+    }
+
+
+
     public void readWriteData(ParseDataResult Result, String outString, int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int  intValueToForce, float floatValueToForce){
         //create a container for task parameters.
         ReadWritekParams params = new ReadWritekParams(Result.data_type,Result.errorMessage,outString,Result.Db, Result.bit,Result.Word,outStringId,errorStringId,DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce );
         //Create a new instance of the PlcReadWrite class and execute it.
         new PlcReadWrite().execute(params);
     }
-
-
 
     //Container with for the PlcReadWrite task parameters.
     private static class ReadWritekParams {
