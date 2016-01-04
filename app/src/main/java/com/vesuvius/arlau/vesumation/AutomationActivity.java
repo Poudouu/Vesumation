@@ -2,6 +2,8 @@ package com.vesuvius.arlau.vesumation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vesuvius.arlau.vesumation.Moka7.*;
 
@@ -48,7 +51,10 @@ public class AutomationActivity extends AppCompatActivity {
     boolean layoutexisting;
     String valueOutputReadWritePlc;
 
-
+    Context context=this;
+    UserDbHelper userDbHelper;
+    SQLiteDatabase sqLiteDatabase;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,103 @@ public class AutomationActivity extends AppCompatActivity {
 
         }
         layoutexisting=true;
+
+        userDbHelper = new UserDbHelper(context);
+        sqLiteDatabase = userDbHelper.getReadableDatabase();
+        cursor=userDbHelper.getInformations(sqLiteDatabase);
+        if(cursor.moveToFirst()){
+            do{
+                int view_id_db;
+                int data_type;
+                int db_type;
+                String Byte_M;
+                String Bit_M;
+                String DB_num;
+                String DB_byte;
+                String DB_bit;
+
+                view_id_db=cursor.getInt(0);
+                data_type=cursor.getInt(1);
+                db_type=cursor.getInt(2);
+                Byte_M=cursor.getString(3);
+                Bit_M=cursor.getString(4);
+                DB_num=cursor.getString(5);
+                DB_byte=cursor.getString(6);
+                DB_bit=cursor.getString(7);
+
+                switch (data_type){
+                    case 1:
+                        createLayout2(1,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
+                        // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
+                        deleteDbRow(view_id_db);
+                        addInfo(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
+                        break;
+                    case 2:
+                        createLayout2(2,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
+                        // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
+                        deleteDbRow(view_id_db);
+                        addInfo(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
+                        break;
+                    case 3:
+                        createLayout2(3,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
+                        // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
+                        deleteDbRow(view_id_db);
+                        addInfo(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
+                        break;
+                    case 4:
+                        createLayout2(4, 1, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit);
+                        // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
+                        deleteDbRow(view_id_db);
+                        addInfo(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
+                        break;
+                    default:
+                        break;
+                }
+                i=i+20;
+
+            }while(cursor.moveToNext());
+        }
+    }
+
+    public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit, int view_id)
+    {
+
+        /*
+
+        Function to add infos in the application database.
+
+        Parameters:
+
+        Integers!
+        Data_type= 1 -> DB/ Data_type= 2 -> Q/ Data_type= 3 -> I/ Data_type= 4 -> M
+        DB_type= 1 -> DBX/ DB_type= 2 -> DBB/ DB_type= 3 -> DBD/ DB_type= 4 -> DBW
+
+        Strings!
+        Byte_M -> If memento, input or output number of the byte
+        Bit_M -> If memento, input or output, number of the bit
+        DB_num -> If DB, number of the DB
+        DB_byte -> If DB, number of the byte
+        DB_bit -> If DB, number of the bit
+         */
+        userDbHelper = new UserDbHelper(context);
+        sqLiteDatabase=userDbHelper.getWritableDatabase();
+        userDbHelper.addInformations(Data_type, BD_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, sqLiteDatabase, view_id);
+
+        //For debbugging only
+        //Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_LONG).show();
+
+        userDbHelper.close();
+    }
+
+    public void deleteDbRow(int rowToDelete){
+        userDbHelper = new UserDbHelper(context);
+        sqLiteDatabase=userDbHelper.getWritableDatabase();
+        userDbHelper.deleteInfo(rowToDelete, sqLiteDatabase);
+
+        //For debbugging only
+        //Toast.makeText(getApplicationContext(),"Data deleted",Toast.LENGTH_LONG).show();
+
+        userDbHelper.close();
     }
 
     public void setIpAddress(View view){showPopup(AutomationActivity.this, p);
@@ -83,7 +186,7 @@ public class AutomationActivity extends AppCompatActivity {
     }
 
 
-    private void showPopupforce(final View view,final Activity context, Point p){
+/*    private void showPopupforce(final View view,final Activity context, Point p){
         RelativeLayout viewGroup = (RelativeLayout) context.findViewById(R.id.forceval);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(LAYOUT_INFLATER_SERVICE);
         boolean booleanLayout=false,valueLayout=false;
@@ -229,7 +332,7 @@ public class AutomationActivity extends AppCompatActivity {
         });
         popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
     }
-
+*/
     private void showPopup(final Activity context, Point p) {
 
         // Inflate the popup_layout.xml
@@ -310,16 +413,16 @@ public class AutomationActivity extends AppCompatActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()){
                         case R.id.db_id:
-                            createLayout2(1);
+                            createLayout2(1,0,0,"","","","","");
                             break;
                         case R.id.m_id:
-                            createLayout2(2);
+                            createLayout2(2,0,0,"","","","","");
                             break;
                         case R.id.q_id:
-                            createLayout2(3);
+                            createLayout2(3,0,0,"","","","","");
                             break;
                         case R.id.i_id:
-                            createLayout2(4);
+                            createLayout2(4,0,0,"","","","","");
                             break;
 
                     }
@@ -331,7 +434,7 @@ public class AutomationActivity extends AppCompatActivity {
             menu.show();
         }
 
-    public void createLayout2(int param){
+    public void createLayout2(int param, int initDbFlag, int db_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit){
         LinearLayout lt = (LinearLayout) findViewById(R.id.automation_layout);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view;
@@ -339,31 +442,32 @@ public class AutomationActivity extends AppCompatActivity {
             case 1:
                 view = inflater.inflate(R.layout.layout_new_db, null);
                 lt.addView(view);
-                assignDynamicId(i, view, param,0);
+                assignDynamicId(i, view, param,0,initDbFlag,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                 break;
             case 2:
                 view = inflater.inflate(R.layout.layout_new_m, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param,0);
+                assignDynamicId(i, view, param,0,initDbFlag,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                 break;
             case 3:
                 view = inflater.inflate(R.layout.layout_new_q, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param,0);
+                assignDynamicId(i, view, param,0,initDbFlag,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                 break;
             case 4:
                 view = inflater.inflate(R.layout.layout_new_i, null);
                 lt.addView(view);
-                assignDynamicId(i,view,param,0);
+                assignDynamicId(i, view, param,0,initDbFlag,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                 break;
         }
     }
 
-    private void assignDynamicId(int i, View view, int param,int index) {
+    private void assignDynamicId(int i, View view, int param,int index, final int initDbFlag, final int db_type,String Byte_M,String Bit_M, final String DB_num, final String DB_byte, final String DB_bit) {
 
         // VIEW = DYNAMICL AYOUT
         Spinner spinner;
         view.setId(i);
+
         ImageView deletebutton=null,confirmbutton=null;
 
         switch(param) {
@@ -377,6 +481,20 @@ public class AutomationActivity extends AppCompatActivity {
                         RelativeLayout parentview = (RelativeLayout) temp.getParent();
                         TextView text = (TextView) view;
 
+                        if (initDbFlag==1){
+                            if(db_type==1){
+                                text.setText("DBX");
+                            }
+                            if(db_type==2){
+                                text.setText("DBB");
+                            }
+                            if(db_type==3){
+                                text.setText("DBD");
+                            }
+                            if(db_type==4){
+                                text.setText("DBW");
+                            }
+                        }
                         EditText txt = (EditText) parentview.findViewById(R.id.bitdbx);
                         TextView dot = (TextView) findViewById(R.id.dot);
                         if (text.getText().equals("DBX")) {
@@ -396,6 +514,21 @@ public class AutomationActivity extends AppCompatActivity {
                             txt.setVisibility(View.INVISIBLE);
                             dot.setVisibility(View.INVISIBLE);
                         }
+
+                        if(initDbFlag==1) {
+                            EditText bitdbx = (EditText) parentview.findViewById(R.id.bitdbx);
+                            EditText bytedbx = (EditText) parentview.findViewById(R.id.bytedbx);
+                            EditText dbnumber = (EditText) parentview.findViewById(R.id.dbnumber);
+                            if (db_type == 1) {
+                                bitdbx.setText(DB_bit);
+                                bytedbx.setText(DB_byte);
+                                dbnumber.setText(DB_num);
+                            }
+                            if (db_type == 2 || db_type==3 || db_type==4) {
+                                bytedbx.setText(DB_byte);
+                                dbnumber.setText(DB_num);
+                            }
+                        }
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -412,7 +545,14 @@ public class AutomationActivity extends AppCompatActivity {
                 break;
 
             case 2:
-                //I XX . XX
+                //M XX . XX
+                if(initDbFlag==1) {
+                    EditText byteM = (EditText) view.findViewById(R.id.mbyte);
+                    EditText bitM = (EditText) view.findViewById(R.id.mbit);
+
+                    byteM.setText(Byte_M);
+                    bitM.setText(Bit_M);
+                }
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
                 //CONFIRM LAYOUT
@@ -421,7 +561,14 @@ public class AutomationActivity extends AppCompatActivity {
 
                 break;
             case 3:
-                //I XX . XX
+                //Q XX . XX
+                if(initDbFlag==1) {
+                    EditText byteQ = (EditText) view.findViewById(R.id.qbyte);
+                    EditText bitQ = (EditText) view.findViewById(R.id.qbit);
+
+                    byteQ.setText(Byte_M);
+                    bitQ.setText(Bit_M);
+                }
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
                 //CONFIRM LAYOUT
@@ -431,6 +578,13 @@ public class AutomationActivity extends AppCompatActivity {
                 break;
             case 4:
                 //I XX . XX
+                if(initDbFlag==1) {
+                    EditText byteI = (EditText) view.findViewById(R.id.ibyte);
+                    EditText bitI = (EditText) view.findViewById(R.id.ibit);
+
+                    byteI.setText(Byte_M);
+                    bitI.setText(Bit_M);
+                }
                 deletebutton = (ImageView) view.findViewById(R.id.deletebut);
                 deletebutton.setOnClickListener(ClickDelete(deletebutton));
                 //CONFIRM LAYOUT
@@ -444,6 +598,7 @@ public class AutomationActivity extends AppCompatActivity {
 
     View.OnClickListener confirmLayout(final ImageView imageView){
         return new View.OnClickListener(){
+
             @Override
             public void onClick(View v) {
                 TextView var_type,var_number;
@@ -451,6 +606,10 @@ public class AutomationActivity extends AppCompatActivity {
                 EditText editText;
                 ImageView refreshbutton,forcebutton,editbutton;
                 View view = null;
+
+                // Used to register infos in the database, see addInfo function for meaning.
+                int data_type=0;
+                int DB_db_type=0;
 
                 RelativeLayout lt = (RelativeLayout) imageView.getParent();
                 ViewGroup parent = (ViewGroup) lt.getParent();
@@ -460,9 +619,11 @@ public class AutomationActivity extends AppCompatActivity {
                 param=var_type.getText().toString();
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if(param.equals("DB")){
+                    data_type=1;
                     Spinner spinner = (Spinner) lt.findViewById(R.id.spinnerdb);
                     String DB_type = spinner.getSelectedItem().toString();
                     if(DB_type.equals("DBX")) {
+                        DB_db_type=1;
                         //Get View
                         view = inflater.inflate(R.layout.layout_boolean, null);
                         //Variable Type
@@ -496,6 +657,16 @@ public class AutomationActivity extends AppCompatActivity {
                         forcebutton.setOnClickListener(confirmLayout(forcebutton));
                     }
                     if(DB_type.equals("DBB")||DB_type.equals("DBD")||DB_type.equals("DBW")){
+
+                        if (DB_type.equals("DBB")){
+                            DB_db_type=2;
+                        }
+                        if (DB_type.equals("DBD")){
+                            DB_db_type=3;
+                        }
+                        if (DB_type.equals("DBW")){
+                            DB_db_type=4;
+                        }
                         //Get View
                         view = inflater.inflate(R.layout.layout_byteword, null);
                         //Variable Type
@@ -524,6 +695,7 @@ public class AutomationActivity extends AppCompatActivity {
                     }
                 }
                 if(param.equals("Q")){
+                    data_type=3;
                     //Get View
                     view = inflater.inflate(R.layout.layout_boolean, null);
                     //Variable Type
@@ -548,6 +720,7 @@ public class AutomationActivity extends AppCompatActivity {
                     forcebutton = (ImageView) view.findViewById(R.id.forcebut);
                     forcebutton.setOnClickListener(confirmLayout(forcebutton));                }
                 if(param.equals("M")){
+                    data_type=2;
                     //Get View
                     view = inflater.inflate(R.layout.layout_boolean, null);
                     //Variable Type
@@ -574,6 +747,7 @@ public class AutomationActivity extends AppCompatActivity {
 
                 }
                 if(param.equals("I")){
+                    data_type=4;
                     //Get View
                     view = inflater.inflate(R.layout.layout_boolean, null);
                     //Variable Type
@@ -605,8 +779,14 @@ public class AutomationActivity extends AppCompatActivity {
                 if (vew != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
-                }     }
+                }
+                //Insert infos in the database after confirmation of the form.
+                // public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit)
+                addInfo(data_type, DB_db_type,byteM,bitM,DBnum,DBbyte,DBbit, idContainer);
+            }
+
         };
+
     }
 
     private View.OnClickListener ClickEdit(final ImageView editbutton) {
@@ -647,6 +827,8 @@ public class AutomationActivity extends AppCompatActivity {
                 view.setId(idContainer);
                 parent.removeView(lt);
                 parent.addView(view, index);
+
+                deleteDbRow(idContainer);
             }
         };
     }
@@ -658,7 +840,10 @@ public class AutomationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RelativeLayout rl = (RelativeLayout) imageView.getParent();
                 LinearLayout lt = (LinearLayout) rl.getParent();
+                int rowToDelete =rl.getId();
                 lt.removeView(rl);
+
+                deleteDbRow(rowToDelete);
                 }
         };
     }
