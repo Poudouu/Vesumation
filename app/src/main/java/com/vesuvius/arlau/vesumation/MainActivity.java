@@ -18,4 +18,9 @@ public class MainActivity extends AppCompatActivity {
         Intent it = new Intent(this,AutomationActivity.class);
         startActivity(it);
     }
+
+    public void startRobotActivity(View v){
+        Intent it = new Intent(this,RobotActivity.class);
+        startActivity(it);
+    }
 }

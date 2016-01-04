@@ -24,7 +24,7 @@
         />
     <Button
         android:id="@+id/robotbut"
-        android:onClick=""
+        android:onClick="startRobotActivity"
         android:layout_gravity="center_horizontal"
         android:text="Robot"
         android:textColor="#CCCCCC"
