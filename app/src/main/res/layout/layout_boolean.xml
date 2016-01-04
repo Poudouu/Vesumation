@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/var_type_confirmed_layout"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="2dp"
         android:textSize="20sp"
         android:visibility="invisible"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/db_number_confirmed_layout"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="2dp"
         android:textSize="20sp"
         android:visibility="invisible"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/db_type_confirmed_layout"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="2dp"
         android:textSize="20sp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text=""
@@ -56,7 +56,7 @@
         android:gravity="center"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/var_number_confirmed_layout"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="2dp"
         android:text=""
         android:id="@+id/value_readwrite" />
 
@@ -92,6 +92,7 @@
     android:layout_toLeftOf="@+id/refreshbut"
     android:layout_marginRight="15dp"
     android:clickable="true"
+    android:onClick="showPopupforce"
     android:src="@drawable/force" />
     <LinearLayout
         android:layout_width="fill_parent"
