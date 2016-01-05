@@ -18,6 +18,22 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:clickable="true"
+            android:layout_marginRight="17dp"
+            android:src="@drawable/saveicon"
+            />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:layout_marginRight="17dp"
+            android:src="@drawable/openicon"
+            />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:id="@+id/setipbutton"
             android:src="@drawable/setip"
             android:onClick="setIpAddress"
@@ -33,17 +49,18 @@
             android:clickable="true"
             android:onClick="showPopMenu"
             />
+
     </LinearLayout>
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/automation_layout">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/automation_layout">
 
-        </LinearLayout>
+    </LinearLayout>
     </ScrollView>
 
     <ImageView

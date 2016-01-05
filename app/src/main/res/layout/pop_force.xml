@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/forceval"
-    android:background="@drawable/layout_bg">
+    android:background="#4b4b4d">
     <TextView
         android:layout_width="wrap_content"
         android:textColor="#cccccc"
@@ -20,7 +20,6 @@
         android:maxLines="1"
         android:maxLength="3"
         android:layout_height="wrap_content"
-        android:inputType="number"
         android:layout_toRightOf="@id/tvIp"
         android:id="@+id/editforce"
         android:textColor="#cccccc"

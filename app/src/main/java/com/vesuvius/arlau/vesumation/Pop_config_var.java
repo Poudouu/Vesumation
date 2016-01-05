@@ -52,7 +52,7 @@ public class Pop_config_var extends Activity {
                 return false;
             }
         });
-        }
+    }
 
 
 
@@ -75,8 +75,8 @@ public class Pop_config_var extends Activity {
 
     }
 
-   public void CancelVarConfig(View view){
-       finish();
+    public void CancelVarConfig(View view){
+        finish();
     }
 
 
