@@ -17,13 +17,14 @@
     <EditText
         android:layout_width="wrap_content"
         android:minWidth="50dp"
-        android:maxLines="1"
-        android:maxLength="3"
         android:layout_height="wrap_content"
         android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="3"
         android:layout_toRightOf="@id/tvIp"
         android:id="@+id/editTxtIp1"
         android:textColor="#cccccc"
+        android:autoText="true"
         android:gravity="center_horizontal" />
     <TextView
         android:layout_width="wrap_content"
@@ -42,7 +43,6 @@
         android:inputType="number"
         android:maxLines="1"
         android:maxLength="3"
-
         android:layout_toRightOf="@id/dotIp1"
         android:id="@+id/editTxtIp2"
         android:textColor="#cccccc"

@@ -3,6 +3,7 @@
     package="com.vesuvius.arlau.vesumation" >
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -11,15 +12,18 @@
         android:supportsRtl="true"
         android:windowSoftInputMode="stateHidden"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        <activity android:name=".MainActivity" >
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AutomationActivity">
+        <activity android:name=".AutomationActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".RobotActivity">
+        <activity android:name=".RobotActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

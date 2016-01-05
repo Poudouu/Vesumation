@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.Gravity;
@@ -31,8 +32,16 @@ import android.widget.Toast;
 
 import com.vesuvius.arlau.vesumation.Moka7.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 public class AutomationActivity extends AppCompatActivity {
 
+    File file;
     Point p;
 
     //DB XX DBB XX . XX
@@ -71,6 +80,8 @@ public class AutomationActivity extends AppCompatActivity {
         }
         layoutexisting=true;
 
+        read_infosIpFile();
+
         userDbHelper = new UserDbHelper(context);
         sqLiteDatabase = userDbHelper.getReadableDatabase();
         cursor=userDbHelper.getInformations(sqLiteDatabase);
@@ -99,25 +110,25 @@ public class AutomationActivity extends AppCompatActivity {
                         createLayout2(1,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                         // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
                         deleteDbRow(view_id_db);
-                        addInfo(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
+                        addInfoDb(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
                         break;
                     case 2:
                         createLayout2(2,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                         // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
                         deleteDbRow(view_id_db);
-                        addInfo(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
+                        addInfoDb(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
                         break;
                     case 3:
                         createLayout2(3,1,db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit);
                         // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
                         deleteDbRow(view_id_db);
-                        addInfo(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
+                        addInfoDb(data_type, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit, i);
                         break;
                     case 4:
                         createLayout2(4, 1, db_type, Byte_M, Bit_M, DB_num, DB_byte, DB_bit);
                         // Bug fix. At the start up we need to delete the database row with the old id to replace it by the one with the new allocated dynamic id i.
                         deleteDbRow(view_id_db);
-                        addInfo(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
+                        addInfoDb(data_type, db_type,Byte_M,Bit_M,DB_num,DB_byte,DB_bit, i);
                         break;
                     default:
                         break;
@@ -129,9 +140,76 @@ public class AutomationActivity extends AppCompatActivity {
         }
     }
 
-    public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit, int view_id)
-    {
+    public void read_infosIpFile(){
+        FileInputStream fileInputStream=null;
+        byte [] inputBuffer = new byte[1024];
+        file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "VisumationIPConfig.txt");
+        String ip="";
+        String rack="";
+        String slot ="";
 
+        //Read file infos
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(inputBuffer);
+            fileInputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            //Parse string infos
+            String infoStringRead = new String(inputBuffer, "UTF-8");
+            String delims = "[\n]";
+            String[] tokens = infoStringRead.split(delims);
+            //Parse name string part
+            ip=tokens[0];
+            rack=tokens[1];
+            slot=tokens[2];
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+
+        try {
+            int Rack = Integer.parseInt(rack);
+            PLCRack=Rack;
+            int Slot = Integer.parseInt(slot);
+            PLCSlot=Slot;
+        }catch(java.lang.NumberFormatException e){
+            e.printStackTrace();
+        }
+
+            PLCAddress=ip;
+    }
+
+    public void register_infos_IPConfig(String IpAdress, int slot, int rack){
+        FileOutputStream fileOutputStream = null;
+        file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "VisumationIPConfig.txt");
+
+        String Slot=slot+"";
+        String Rack=rack+"";
+
+        //String infosStringWrite=IpAdress+"\n"+Slot+"\n"+Rack;
+        String infosStringWrite=IpAdress+"\n"+Slot+"\n"+Rack+"\n";
+
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(infosStringWrite.getBytes());
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_LONG).show();
+    }
+
+    public void addInfoDb(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit, int view_id)
+    {
         /*
 
         Function to add infos in the application database.
@@ -244,7 +322,7 @@ public class AutomationActivity extends AppCompatActivity {
             EditText edt = (EditText)dialog.findViewById(R.id.editforce);
             edt.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             ImageView confirmForce = (ImageView) dialog.findViewById(R.id.confirmforce);
-            confirmForce.setOnClickListener(ClickForce(dialog, rl, db_type, dbNum,variable_number));
+            confirmForce.setOnClickListener(ClickForce(dialog, rl, db_type, dbNum, variable_number));
         }
 
         dialog.show();
@@ -258,18 +336,54 @@ public class AutomationActivity extends AppCompatActivity {
         final View layout = inflater.inflate(R.layout.pop_config_var_layout, null);
         String[] Ip = PLCAddress.split("\\.");
         EditText edt1;
-        edt1 = (EditText) layout.findViewById(R.id.editTxtIp1);
-        edt1.setHint(Ip[0]);
+
         edt1 = (EditText) layout.findViewById(R.id.editTxtIp2);
-        edt1.setHint(Ip[1]);
+        edt1.setText("");
+        try {
+            edt1.setText(Ip[1]);
+            //Bug fix. Try to fill first IP[1], if not possible, we don't fill IP[0] with some shit.
+            edt1 = (EditText) layout.findViewById(R.id.editTxtIp1);
+            edt1.setText("");
+            try {
+                edt1.setText(Ip[0]);
+            }catch(java.lang.ArrayIndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+
         edt1 = (EditText) layout.findViewById(R.id.editTxtIp3);
-        edt1.setHint(Ip[2]);
+        edt1.setText("");
+        try {
+            edt1.setText(Ip[2]);
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+
         edt1 = (EditText) layout.findViewById(R.id.editTxtIp4);
-        edt1.setHint(Ip[3]);
+        edt1.setText("");
+        try {
+            edt1.setText(Ip[3]);
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+
         edt1 = (EditText) layout.findViewById(R.id.ediTxtRack);
-        edt1.setHint(String.valueOf(PLCRack));
+        edt1.setText("");
+        try {
+            edt1.setText(String.valueOf(PLCRack));
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
+
         edt1 = (EditText) layout.findViewById(R.id.ediTxtSlot);
-        edt1.setHint(String.valueOf(PLCSlot));
+        edt1.setText("");
+        try {
+            edt1.setText(String.valueOf(PLCSlot));
+        }catch(java.lang.ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
         // Creating the PopupWindow
 
         final PopupWindow popup = new PopupWindow(layout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
@@ -307,8 +421,12 @@ public class AutomationActivity extends AppCompatActivity {
                 } else {
                     PLCSlot = Integer.parseInt(temp);
                 }
+
+                register_infos_IPConfig(PLCAddress, PLCSlot, PLCRack);
+
                 popup.dismiss();
                 View vew = AutomationActivity.this.getCurrentFocus();
+
                 if (vew != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(vew.getWindowToken(), 0);
@@ -703,7 +821,7 @@ public class AutomationActivity extends AppCompatActivity {
                     //Insert infos in the database after confirmation of the form.
                     // public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit)
                     deleteDbRow(idContainer);
-                    addInfo(data_type, DB_db_type, byteM, bitM, DBnum, DBbyte, DBbit, idContainer);
+                    addInfoDb(data_type, DB_db_type, byteM, bitM, DBnum, DBbyte, DBbit, idContainer);
 
                 }catch (java.lang.NullPointerException e){
                     e.printStackTrace();
