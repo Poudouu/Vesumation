@@ -821,7 +821,8 @@ public class AutomationActivity extends AppCompatActivity {
                     //Insert infos in the database after confirmation of the form.
                     // public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit)
                     deleteDbRow(idContainer);
-                    addInfoDb(data_type, DB_db_type, byteM, bitM, DBnum, DBbyte, DBbit, idContainer);
+                    i=i+20;
+                    addInfoDb(data_type, DB_db_type, byteM, bitM, DBnum, DBbyte, DBbit, i);
 
                 }catch (java.lang.NullPointerException e){
                     e.printStackTrace();
