@@ -2,57 +2,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#AFAFAF"
     >
 
 <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_centerInParent="true">
-    <Button
-        android:id="@+id/autobut"
-        android:onClick="startAutomationActivity"
-        android:text="Automation"
-        android:textColor="#CCCCCC"
-        android:textSize="30sp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:layout_width="270dp"
-        android:layout_height="60dp"
-        android:background="@drawable/buttonshape1"
-        android:layout_marginBottom="50dp"
-        />
-    <Button
-        android:id="@+id/robotbut"
-        android:onClick="startRobotActivity"
-        android:layout_gravity="center_horizontal"
-        android:text="Robot"
-        android:textColor="#CCCCCC"
-        android:textSize="30sp"
+    android:layout_centerInParent="true"
+    android:id="@+id/linearLayout"></LinearLayout>
 
-        android:layout_width="270dp"
-        android:layout_height="60dp"
-        android:background="@drawable/buttonshape1"
-        android:layout_marginBottom="50dp"
-        />
-</LinearLayout>
-
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/imageView2"
-        android:src="@drawable/vesuviuslogo"
-        android:layout_above="@+id/imageView3"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:id="@+id/imageView3"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/vesuviusline" />
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:text="Visumation"
+        android:textSize="60sp"
+        android:typeface="monospace"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/icon_app"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="A S7 PLC visualization"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="and force tags application"
+        android:textSize="20sp"
+        android:layout_marginTop="45dp"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:clickable="true"
+        android:id="@+id/icon_app"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon"
+        android:layout_centerHorizontal="true"
+        />
 </RelativeLayout>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="65dp"
+    android:layout_width="fill_parent"
+    android:id="@+id/boolean_confirmed_layout"
+    android:background="#798081">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:textSize="15sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/var_type_confirmed_layout" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/var_type_confirmed_layout"
+        android:layout_marginLeft="2dp"
+        android:textSize="15sp"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/db_number_confirmed_layout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/db_number_confirmed_layout"
+        android:layout_marginLeft="2dp"
+        android:textSize="15sp"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/db_type_confirmed_layout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/db_type_confirmed_layout"
+        android:layout_marginLeft="2dp"
+        android:textSize="15sp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/var_number_confirmed_layout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/var_type_confirmed_layout"
+        android:text=""
+        android:id="@+id/value_readwrite" />
+
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/editicon"
+        android:layout_marginTop="5dp"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:id="@+id/editbutton"/>
+
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:id="@+id/refreshbut"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/editbutton"
+        android:layout_marginRight="20dp"
+        android:clickable="true"
+        android:src="@drawable/refresh" />
+
+
+    <ImageView
+    android:layout_width="35dp"
+    android:layout_height="35dp"
+    android:id="@+id/forcebut"
+    android:layout_centerVertical="true"
+    android:layout_toLeftOf="@+id/refreshbut"
+    android:layout_marginRight="20dp"
+    android:clickable="true"
+    android:onClick="showPopupforce"
+    android:src="@drawable/force" />
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="64dp"
+        android:background="#000000"></LinearLayout>
+
+</RelativeLayout>

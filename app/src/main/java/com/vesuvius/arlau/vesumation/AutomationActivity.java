@@ -1157,7 +1157,7 @@ public class AutomationActivity extends AppCompatActivity {
                             params[0]. errorMessage = "";
                         } else {
                             params[0].outString = "";
-                            params[0].errorMessage = "ERR: Wrong input.";
+                            params[0].errorMessage = "Wrong input.";
                         }
                     }
 
@@ -1187,23 +1187,23 @@ public class AutomationActivity extends AppCompatActivity {
                     }
 
                     if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("O")))){
-                        params[0].errorMessage="ERR: Wrong input.";
+                        params[0].errorMessage="Wrong input.";
                         params[0].outString="";
                     }
 
                     if(res!=0) {
-                        params[0].errorMessage = "Data couldn't be read.";
+                        params[0].errorMessage = "Can't read data.";
                         params[0].outString = "";
                     }
 
 
                 }else{
-                    params[0].errorMessage="ERR: No connect.";
+                    params[0].errorMessage="No connection";
                     params[0].outString="";
                 }
 
             } catch (Exception e) {
-                params[0].errorMessage="ERR: No connect.";
+                params[0].errorMessage="No connection";
                 params[0].outString="";
                 Thread.interrupted();
             }
@@ -1261,7 +1261,7 @@ public class AutomationActivity extends AppCompatActivity {
             Result.Db=Integer.parseInt(Db_s);
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
-            Result. errorMessage="ERR: Wrong data input.";
+            Result. errorMessage="Wrong input.";
 
         }
         try{
@@ -1289,10 +1289,10 @@ public class AutomationActivity extends AppCompatActivity {
             Result.data_type=data_type_c+"";
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }catch(java.lang.NullPointerException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
 
         }
         try{
@@ -1322,10 +1322,10 @@ public class AutomationActivity extends AppCompatActivity {
             }
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }catch (java.lang.NullPointerException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }
         return Result;
     }
@@ -1352,7 +1352,7 @@ public class AutomationActivity extends AppCompatActivity {
 
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }
 
         if(isMerker) {
@@ -1373,10 +1373,10 @@ public class AutomationActivity extends AppCompatActivity {
             Result.Word = Integer.parseInt(Word_s);
         }catch(java.lang.NumberFormatException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
             e.printStackTrace();
-            Result.errorMessage="ERR: Wrong data input.";
+            Result.errorMessage="Wrong input.";
         }
         return Result;
     }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#AFAFAF"
+    >
+
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_centerInParent="true"
+    android:id="@+id/linearLayout"></LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:text="Visumation"
+        android:textSize="100sp"
+        android:typeface="monospace"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/icon_app"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="A S7 PLC visualization"
+        android:textSize="50sp"
+        android:layout_marginTop="100dp"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="and force tags application"
+        android:textSize="50sp"
+        android:layout_marginTop="160dp"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:clickable="true"
+        android:id="@+id/icon_app"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon"
+        android:layout_centerHorizontal="true"
+        />
+</RelativeLayout>
