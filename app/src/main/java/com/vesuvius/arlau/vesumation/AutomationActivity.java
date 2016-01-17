@@ -51,6 +51,9 @@ public class AutomationActivity extends AppCompatActivity {
     static int INDEX_START_DYN_LAYOUT=50;
     final Context cont = this;
 
+    boolean bitValueToForce=false;
+    boolean DataAsToBeForced=false;
+
     String PLCAddress="192.168.1.100";
     int PLCRack=0;
     int PLCSlot=3;
@@ -72,12 +75,10 @@ public class AutomationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         i = INDEX_START_DYN_LAYOUT;
         setup = false;
-        if (layoutexisting) {
-
-        }else{
+        if (!layoutexisting) {
             setContentView(R.layout.automation);
-
         }
+
         layoutexisting=true;
 
         read_infosIpFile();
@@ -166,8 +167,8 @@ public class AutomationActivity extends AppCompatActivity {
             String[] tokens = infoStringRead.split(delims);
             //Parse name string part
             ip=tokens[0];
-            rack=tokens[1];
-            slot=tokens[2];
+            slot=tokens[1];
+            rack=tokens[2];
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }catch(java.lang.ArrayIndexOutOfBoundsException e){
@@ -193,7 +194,6 @@ public class AutomationActivity extends AppCompatActivity {
         String Slot=slot+"";
         String Rack=rack+"";
 
-        //String infosStringWrite=IpAdress+"\n"+Slot+"\n"+Rack;
         String infosStringWrite=IpAdress+"\n"+Slot+"\n"+Rack+"\n";
 
         try {
@@ -205,7 +205,8 @@ public class AutomationActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_LONG).show();
+        //For debugging only
+        //Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_LONG).show();
     }
 
     public void addInfoDb(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit, int view_id)
@@ -269,6 +270,7 @@ public class AutomationActivity extends AppCompatActivity {
 
     public void showPopupforce(View view){
 
+        DataAsToBeForced=false;
         // Inflate the popup_layout.xml
         String dbNum;
         RelativeLayout rl = (RelativeLayout) view.getParent();
@@ -298,6 +300,8 @@ public class AutomationActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     redbut.setImageResource(R.drawable.red_button_pressed);
                     greenbut.setImageResource(R.drawable.green_button);
+                    bitValueToForce=false;
+                    DataAsToBeForced=true;
                 }
             });
             greenbut.setOnClickListener(new View.OnClickListener() {
@@ -305,6 +309,8 @@ public class AutomationActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     redbut.setImageResource(R.drawable.red_button);
                     greenbut.setImageResource(R.drawable.gree_button_pressed);
+                    bitValueToForce=true;
+                    DataAsToBeForced=true;
                 }
             });
         }
@@ -449,22 +455,24 @@ public class AutomationActivity extends AppCompatActivity {
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.db_id:
-                        createLayout2(1,0,0,"","","","","");
+                        createLayout2(1, 0, 0, "", "", "", "", "");
                         break;
                     case R.id.m_id:
-                        createLayout2(2,0,0,"","","","","");
+                        createLayout2(2, 0, 0, "", "", "", "", "");
                         break;
                     case R.id.q_id:
-                        createLayout2(3,0,0,"","","","","");
+                        createLayout2(3, 0, 0, "", "", "", "", "");
                         break;
                     case R.id.i_id:
-                        createLayout2(4,0,0,"","","","","");
+                        createLayout2(4, 0, 0, "", "", "", "", "");
+                        break;
+                    default:
                         break;
 
                 }
-                i=i+20;
+                i = i + 20;
                 return true;
             }
         });
@@ -524,19 +532,18 @@ public class AutomationActivity extends AppCompatActivity {
                                 text.setText("DBX");
                                 temp.setSelection(0);
                             }
-                            if(db_type==2){
-                                text.setText("DBB");
-                                temp.setSelection(1);
-
-                            }
+                            //if(db_type==2){
+                            //    text.setText("DBB");
+                            //    temp.setSelection(3);
+                            //}
                             if(db_type==3){
                                 text.setText("DBD");
-                                temp.setSelection(3);
+                                temp.setSelection(2);
 
                             }
                             if(db_type==4){
                                 text.setText("DBW");
-                                temp.setSelection(2);
+                                temp.setSelection(1);
 
                             }
                         }
@@ -922,9 +929,8 @@ public class AutomationActivity extends AppCompatActivity {
                 int errorStringId=outStringId;
 
                 //True, the data data_address_to_read will be forced
-                boolean DataAsToBeForced=false;
+                DataAsToBeForced=false;
                 //Value forced in cas of DataAsToBeForced
-                boolean bitValueToForce=false;
                 int intValueToForce=0;
                 float floatValueToForce=0;
 
@@ -956,11 +962,11 @@ public class AutomationActivity extends AppCompatActivity {
                 // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
                 if(!(Result.errorMessage.equals(""))){
                     valueOutputReadWritePlc=Result.errorMessage;
+                    variable_readwrite.setText(valueOutputReadWritePlc);
                 }else {
-                    readWriteData(Result, outString,outStringId,errorStringId, DataAsToBeForced,bitValueToForce,intValueToForce,floatValueToForce);
+                    readWriteData(Result, outString,outStringId,errorStringId, DataAsToBeForced,bitValueToForce,intValueToForce,floatValueToForce,variable_readwrite);
                 }
 
-                variable_readwrite.setText(valueOutputReadWritePlc);
             }
 
 
@@ -973,21 +979,18 @@ public class AutomationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Define container to stock the parsed datas.
-                boolean isMerker=false, isInput=false, isOutput=false,DataAsToBeForced=true;
+                boolean isMerker=false,isInput=false, isOutput=false;
                 int intValueToForce=0;
                 float floatValueToForce=0;
-                boolean bitValueToForce=false;
                 String outString="";
                 int outStringId=0;
                 int errorStringId=outStringId;
                 ParseDataResult Result;
+                TextView variable_readwrite = (TextView) ll.findViewById(R.id.value_readwrite);
                 //Construction of the datas required to force
                 //data address
                 String data_address_to_read=variable_type+variable_number;
 
-                //bitValuetoForce
-                ImageView greenbut = (ImageView) dialog.findViewById(R.id.forcetrue);
-                ImageView redbut = (ImageView) dialog.findViewById(R.id.forcefalse);
                 // Data type
                 TextView variable_type = (TextView) ll.findViewById(R.id.var_type_confirmed_layout);
 
@@ -998,14 +1001,6 @@ public class AutomationActivity extends AppCompatActivity {
                 }
                 if (variable_type.getText().equals("Q")){
                     isOutput=true;
-                }
-
-                if(greenbut.getDrawable().getConstantState().equals(R.drawable.gree_button_pressed) && redbut.getDrawable().getConstantState().equals(R.drawable.red_button) ){
-                    bitValueToForce=true;
-                }else{
-                    if(redbut.getDrawable().getConstantState().equals(R.drawable.red_button_pressed) && greenbut.getDrawable().getConstantState().equals(R.drawable.green_button)){
-                        bitValueToForce=false;
-                    }else{}
                 }
 
                 //Bug fix. Call the correct parse data if the data type is DB.
@@ -1020,12 +1015,17 @@ public class AutomationActivity extends AppCompatActivity {
                 // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
                 if(!(Result.errorMessage.equals(""))){
                     valueOutputReadWritePlc=Result.errorMessage;
+                    variable_readwrite.setText(valueOutputReadWritePlc);
                 } else {
-                    readWriteData(Result, outString, outStringId, errorStringId, DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce);
+                    if (DataAsToBeForced) {
+                        readWriteData(Result, outString, outStringId, errorStringId, DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce, variable_readwrite);
+                    }else{
+                        valueOutputReadWritePlc="No data to force.";
+                        variable_readwrite.setText(valueOutputReadWritePlc);
+                    }
                 }
-                TextView variable_readwrite = (TextView) ll.findViewById(R.id.value_readwrite);
-                variable_readwrite.setText(valueOutputReadWritePlc);
                 dialog.dismiss();
+
             }
         };
 
@@ -1037,45 +1037,53 @@ public class AutomationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Define container to stock the parsed datas.
-                boolean isMerker=false, isInput=false, isOutput=false,DataAsToBeForced=true;
+                boolean isMerker=false, isInput=false, isOutput=false;
                 int intValueToForce=0;
                 float floatValueToForce=0;
-                boolean bitValueToForce=false;
                 String outString="";
                 int outStringId=0;
                 int errorStringId=outStringId;
                 ParseDataResult Result;
+                TextView variable_readwrite = (TextView) ll.findViewById(R.id.value_readwrite);
 
                 //Construction of the datas required to force
                 //data address
                 String data_address_to_read="DB"+dbNum+dbType+variable_number;
                 //bitValuetoForce
                 EditText value_to_force_edt = (EditText) dialog.findViewById(R.id.editforce);
-                if(dbType.equals("DBB")||dbType.equals("DBW")){intValueToForce=Integer.parseInt(value_to_force_edt.getText().toString());}
-                if(dbType.equals("DBD")){
-                    floatValueToForce=Float.parseFloat(value_to_force_edt.getText().toString());
-                }
-                // Data type
-                Result = parse_data_db(data_address_to_read);
+                try {
+                    if (dbType.equals("DBB") || dbType.equals("DBW")) {
+                        intValueToForce = Integer.parseInt(value_to_force_edt.getText().toString());
+                    }
+                    if (dbType.equals("DBD")) {
+                        floatValueToForce = Float.parseFloat(value_to_force_edt.getText().toString());
+                    }
+                    // Data type
+                    Result = parse_data_db(data_address_to_read);
 
-                //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
-                // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
-                if(!(Result.errorMessage.equals(""))){
-                    valueOutputReadWritePlc=Result.errorMessage;
-                } else {
-                    readWriteData(Result, outString, outStringId, errorStringId, DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce);
+                    //If an error occured during the data parsing, we update directly the outString and the errorMessage strings and display them without calling the readWriteData function.
+                    // In normal operation, if the data is parsed and read successfully, the update is done by the onPostExecute function of the PlcReadWrite class.
+                    if (!(Result.errorMessage.equals(""))) {
+                        valueOutputReadWritePlc = Result.errorMessage;
+                        variable_readwrite.setText(valueOutputReadWritePlc);
+                    } else {
+                        readWriteData(Result, outString, outStringId, errorStringId, DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce, variable_readwrite);
+                    }
+                }catch(java.lang.NumberFormatException e){
+                    e.printStackTrace();
+                    valueOutputReadWritePlc = "Wrong val to force.";
+                    variable_readwrite.setText(valueOutputReadWritePlc);
                 }
-                TextView variable_readwrite = (TextView) ll.findViewById(R.id.value_readwrite);
-                variable_readwrite.setText(valueOutputReadWritePlc);
+
                 dialog.dismiss();
             }
         };
 
     }
 
-    public void readWriteData(ParseDataResult Result, String outString, int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int  intValueToForce, float floatValueToForce){
+    public void readWriteData(ParseDataResult Result, String outString, int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int  intValueToForce, float floatValueToForce, TextView textView){
         //create a container for task parameters.
-        ReadWritekParams params = new ReadWritekParams(Result.data_type,Result.errorMessage,outString,Result.Db, Result.bit,Result.Word,outStringId,errorStringId,DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce );
+        ReadWritekParams params = new ReadWritekParams(Result.data_type,Result.errorMessage,outString,Result.Db, Result.bit,Result.Word,outStringId,errorStringId,DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce,textView );
         //Create a new instance of the PlcReadWrite class and execute it.
         new PlcReadWrite().execute(params);
     }
@@ -1096,8 +1104,9 @@ public class AutomationActivity extends AppCompatActivity {
         boolean bitValueToForce;
         int intValueToForce;
         float floatValueToForce;
+        TextView textView;
 
-        ReadWritekParams(String data_type, String errorMessage,String outString,int Db,int bit,int Word,int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int intValueToForce, float floatValueToForce) {
+        ReadWritekParams(String data_type, String errorMessage,String outString,int Db,int bit,int Word,int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int intValueToForce, float floatValueToForce, TextView textView) {
             this.data_type = data_type;
             this.errorMessage = errorMessage;
             this.outString = outString;
@@ -1110,6 +1119,7 @@ public class AutomationActivity extends AppCompatActivity {
             this.bitValueToForce = bitValueToForce;
             this.intValueToForce = intValueToForce;
             this.floatValueToForce = floatValueToForce;
+            this.textView=textView;
         }
     }
 
@@ -1119,6 +1129,7 @@ public class AutomationActivity extends AppCompatActivity {
         int outStringId;
         int errorStringId;
         int res;
+        TextView textView2;
 
         @Override
         protected String doInBackground(ReadWritekParams... params) {
@@ -1127,6 +1138,7 @@ public class AutomationActivity extends AppCompatActivity {
             byte[] data_2=new byte[2];
             byte[] data_3=new byte[4];
             int AreaType=0;
+            textView2=params[0].textView;
 
             try {
                 client.SetConnectionType(S7.S7_BASIC);
@@ -1168,6 +1180,7 @@ public class AutomationActivity extends AppCompatActivity {
                             S7.SetWordAt(data_2, 0, params[0].intValueToForce);
                             res = client.WriteArea(S7.S7AreaDB, params[0].Db,params[0].Word, 2, data_2);
                             params[0].errorMessage = "";
+                            res=client.ReadArea(S7.S7AreaDB,params[0].Db,params[0].Word,2,data_2);
                         }
                         params[0].outString=S7.GetWordAt(data_2, 0)+"";
                         params[0].errorMessage="";
@@ -1181,12 +1194,13 @@ public class AutomationActivity extends AppCompatActivity {
                             S7.SetFloatAt(data_3, 0, params[0].floatValueToForce);
                             res = client.WriteArea(S7.S7AreaDB, params[0].Db, params[0].Word, 2, data_3);
                             params[0].errorMessage = "";
+                            res=client.ReadArea(S7.S7AreaDB,params[0].Db,params[0].Word,2,data_3);
                         }
                         params[0].outString= S7.GetFloatAt(data_3, 0)+"";
                         params[0].errorMessage="";
                     }
 
-                    if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("O")))){
+                    if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("O")))&&(!((params[0].data_type).equals("B")))){
                         params[0].errorMessage="Wrong input.";
                         params[0].outString="";
                     }
@@ -1198,12 +1212,12 @@ public class AutomationActivity extends AppCompatActivity {
 
 
                 }else{
-                    params[0].errorMessage="No connection";
+                    params[0].errorMessage="No connection.";
                     params[0].outString="";
                 }
 
             } catch (Exception e) {
-                params[0].errorMessage="No connection";
+                params[0].errorMessage="No connection.";
                 params[0].outString="";
                 Thread.interrupted();
             }
@@ -1223,6 +1237,7 @@ public class AutomationActivity extends AppCompatActivity {
             }else {
                 valueOutputReadWritePlc=errorMessage;
             }
+            textView2.setText(valueOutputReadWritePlc);
         }
 
     }
@@ -1365,7 +1380,7 @@ public class AutomationActivity extends AppCompatActivity {
         }
         if(isOutput) {
             split1 = "[Q]";
-            Result.data_type = "O";
+            Result.data_type = "Q";
         }
         try {
             token1 = token[0].split(split1);

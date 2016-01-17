@@ -3,7 +3,7 @@
     android:layout_height="65dp"
     android:layout_width="fill_parent"
     android:id="@+id/boolean_confirmed_layout"
-    android:background="#798081">
+    android:background="@drawable/data_line_background">
 
     <TextView
         android:layout_width="wrap_content"

@@ -3,7 +3,7 @@
     android:layout_height="60dp"
     android:layout_width="fill_parent"
     android:id="@+id/new_variable_entered"
-    android:background="#798081">
+    android:background="@drawable/new_data_line_background">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
         android:text="Q"
         android:id="@+id/var_type" />
     <EditText
-        android:layout_width="30dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginTop="8dp"
@@ -37,6 +37,7 @@
 
     <EditText
         android:layout_width="30dp"
+        android:maxLines="1"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginTop="8dp"

@@ -8,7 +8,6 @@
     </string-array>
     <string-array name="dbtype">
         <item>DBX</item>
-        <item>DBB</item>
         <item>DBW</item>
         <item>DBD</item>
     </string-array>

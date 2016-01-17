@@ -2,21 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="#AFAFAF"
+    android:background="@drawable/background"
     android:clipToPadding="false">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="#7e7d7d">
+        android:background="@drawable/automation_layout_background">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/title"
             android:text="Visumation"
-            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textSize="30sp"
             android:textColor="#000000"
             android:typeface="monospace"
             android:layout_marginTop="0dp" />

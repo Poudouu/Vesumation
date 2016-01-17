@@ -21,9 +21,13 @@ public class MainActivity extends AppCompatActivity {
         Count.start();
     }
 
+
+
     public void startAutomationActivity(){
         Intent it = new Intent(this,AutomationActivity.class);
         startActivity(it);
+        Count.cancel();
+        finish();
     }
 
 
@@ -37,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
             // Reset of the game when the timeout goes to 0
             public void onFinish() {
                 startAutomationActivity();
-                Count.cancel();
             }
         };
     }

@@ -3,22 +3,22 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/forceval"
-    android:background="#463F32">
+    android:background="@drawable/automation_layout_background">
     <TextView
         android:layout_width="wrap_content"
         android:textColor="#cccccc"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="30dp"
+        android:layout_centerVertical="true"
         android:layout_marginBottom="30dp"
         android:textSize="20sp"
         android:text="Force to: "
         android:id="@+id/tvIp"/>
     <EditText
-        android:layout_width="75dp"
+        android:layout_width="90dp"
         android:maxLines="1"
-        android:maxLength="3"
+        android:maxLength="8"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tvIp"
         android:id="@+id/editforce"
