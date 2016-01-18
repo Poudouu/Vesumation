@@ -1155,10 +1155,10 @@ public class AutomationActivity extends AppCompatActivity {
                     if ((params[0].data_type).equals("I")) {
                         AreaType = S7.S7AreaPE;
                     }
-                    if ((params[0].data_type).equals("O")) {
+                    if ((params[0].data_type).equals("Q")) {
                         AreaType = S7.S7AreaPA;
                     }
-                    if (((params[0].data_type).equals("X")) || ((params[0].data_type).equals("M")) || ((params[0].data_type).equals("I")) || ((params[0].data_type).equals("O"))) {
+                    if (((params[0].data_type).equals("X")) || ((params[0].data_type).equals("M")) || ((params[0].data_type).equals("I")) || ((params[0].data_type).equals("Q"))) {
                         res = client.ReadArea(AreaType, params[0].Db, params[0].Word, 1, data_1);
                         if (params[0].bit < 8) {
                             if (params[0].DataAsToBeForced && (!((params[0].data_type).equals("I")))) {
@@ -1200,7 +1200,7 @@ public class AutomationActivity extends AppCompatActivity {
                         params[0].errorMessage="";
                     }
 
-                    if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("O")))&&(!((params[0].data_type).equals("B")))){
+                    if ((!((params[0].data_type).equals("X")))&&(!((params[0].data_type).equals("W")))&&(!((params[0].data_type).equals("D")))&&(!((params[0].data_type).equals("M")))&&(!((params[0].data_type).equals("I")))&&(!((params[0].data_type).equals("Q")))&&(!((params[0].data_type).equals("B")))){
                         params[0].errorMessage="Wrong input.";
                         params[0].outString="";
                     }
