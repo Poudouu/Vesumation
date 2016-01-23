@@ -63,6 +63,7 @@
 
 
     <ImageView
+        android:background="@drawable/edit_button"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@drawable/editicon"
@@ -75,6 +76,7 @@
 
 
     <ImageView
+        android:background="@drawable/refresh_button"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:id="@+id/refreshbut"
@@ -86,6 +88,7 @@
 
 
     <ImageView
+        android:background="@drawable/force_button"
     android:layout_width="35dp"
     android:layout_height="35dp"
     android:id="@+id/forcebut"

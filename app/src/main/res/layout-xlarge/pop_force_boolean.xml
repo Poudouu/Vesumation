@@ -35,6 +35,7 @@
         android:id="@+id/forcetrue"/>
 
     <ImageView
+        android:background="@drawable/confirm_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:clickable="true"

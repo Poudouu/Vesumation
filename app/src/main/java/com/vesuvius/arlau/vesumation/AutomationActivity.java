@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -48,7 +49,7 @@ public class AutomationActivity extends AppCompatActivity {
     //1  2  3   4  5 6
 
     static int INDEX_READWRITE_VALUE=9;
-    static int INDEX_START_DYN_LAYOUT=50;
+    static int INDEX_START_DYN_LAYOUT=10;
     final Context cont = this;
 
     boolean bitValueToForce=false;
@@ -59,7 +60,7 @@ public class AutomationActivity extends AppCompatActivity {
     int PLCSlot=3;
     String Ip1="", Ip2="",Ip3="",Ip4="";
 
-    int i = 0;
+    int i;
     boolean setup = false;
     boolean layoutexisting;
     String valueOutputReadWritePlc;
@@ -134,7 +135,7 @@ public class AutomationActivity extends AppCompatActivity {
                     default:
                         break;
                 }
-                i=i+20;
+                i=i+1;
 
             }while(cursor.moveToNext());
 
@@ -817,7 +818,7 @@ public class AutomationActivity extends AppCompatActivity {
                         forcebutton.setEnabled(false);
                     }
 
-                    view.setId(idContainer);
+                    view.setId(i);
                     parent.removeView(lt);
                     parent.addView(view, index);
                     View vew = AutomationActivity.this.getCurrentFocus();
@@ -828,8 +829,8 @@ public class AutomationActivity extends AppCompatActivity {
                     //Insert infos in the database after confirmation of the form.
                     // public void addInfo(int Data_type, int BD_type,String Byte_M,String Bit_M,String DB_num,String DB_byte,String DB_bit)
                     deleteDbRow(idContainer);
-                    i=i+20;
                     addInfoDb(data_type, DB_db_type, byteM, bitM, DBnum, DBbyte, DBbit, i);
+                    i=i+1;
 
                 }catch (java.lang.NullPointerException e){
                     e.printStackTrace();
@@ -879,7 +880,6 @@ public class AutomationActivity extends AppCompatActivity {
                 parent.removeView(lt);
                 parent.addView(view, index);
 
-                deleteDbRow(idContainer);
             }
         };
     }
@@ -1083,6 +1083,7 @@ public class AutomationActivity extends AppCompatActivity {
 
     public void readWriteData(ParseDataResult Result, String outString, int outStringId,int errorStringId, boolean DataAsToBeForced, boolean bitValueToForce, int  intValueToForce, float floatValueToForce, TextView textView){
         //create a container for task parameters.
+        textView.setText("Please wait...");
         ReadWritekParams params = new ReadWritekParams(Result.data_type,Result.errorMessage,outString,Result.Db, Result.bit,Result.Word,outStringId,errorStringId,DataAsToBeForced, bitValueToForce, intValueToForce, floatValueToForce,textView );
         //Create a new instance of the PlcReadWrite class and execute it.
         new PlcReadWrite().execute(params);
@@ -1239,7 +1240,6 @@ public class AutomationActivity extends AppCompatActivity {
             }
             textView2.setText(valueOutputReadWritePlc);
         }
-
     }
 
     //Container for parameters returned by the parse functions.

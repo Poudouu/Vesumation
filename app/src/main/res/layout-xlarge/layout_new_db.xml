@@ -81,6 +81,7 @@
         android:layout_marginLeft="2dp"
         android:id="@+id/bitdbx"/>
     <ImageView
+        android:background="@drawable/button_bin"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/delete"
@@ -92,6 +93,7 @@
         android:layout_alignParentRight="true"
         android:id="@+id/deletebut"/>
     <ImageView
+        android:background="@drawable/register_button"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="55dp"

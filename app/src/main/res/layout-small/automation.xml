@@ -29,6 +29,7 @@
             />
 
         <ImageView
+            android:background="@drawable/ipconfig_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/setipbutton"
@@ -39,6 +40,7 @@
             android:clickable="true"/>
 
         <ImageView
+            android:background="@drawable/plus_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/newvar_button"
