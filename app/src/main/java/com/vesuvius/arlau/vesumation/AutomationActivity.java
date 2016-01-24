@@ -835,6 +835,10 @@ public class AutomationActivity extends AppCompatActivity {
                 }catch (java.lang.NullPointerException e){
                     e.printStackTrace();
                 }
+
+                //Hide keyboard after input confirmation.
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(null, 0);
             }
 
         };

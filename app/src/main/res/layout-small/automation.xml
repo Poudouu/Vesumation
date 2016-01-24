@@ -12,13 +12,14 @@
         android:background="@drawable/automation_layout_background">
 
         <TextView
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/title"
             android:text="Visumation"
             android:textStyle="bold"
             android:textSize="25sp"
-            android:textColor="#000000"
+            android:textColor="#cccccc"
             android:typeface="monospace"
             android:layout_marginTop="0dp" />
 
